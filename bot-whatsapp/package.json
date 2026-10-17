@@ -1,0 +1,14 @@
+{
+  "name": "centavus-zap-bot",
+  "version": "1.0.0",
+  "description": "Bot oficial do Centavus no WhatsApp (WhatsApp Cloud API) — sem dependências, só Node 18+.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Centavus — plataforma financeira para organizar gastos, metas e investimentos em um só lugar.">
+    <meta name="theme-color" content="#101010">
+    <title>Centavus 2.0 — Dashboard Financeiro</title>
+    <link rel="icon" href="assets/logo.png" type="image/png">
+
+    <!-- Assets locais: o Centavus funciona mesmo sem internet -->
+    <script src="assets/tailwind.min.js"></script>
+    <script src="assets/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+
+    <!-- Google Fonts Inter & Manrope (progressivo: sem internet usa as fontes do sistema) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Estilos: ordem importa (base → login → dashboard → tema claro/impressão) -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/voice.css">
+    <link rel="stylesheet" href="css/premium.css">
+    <script src="js/theme-boot.js"></script>
+</head>
+<body class="min-h-screen flex flex-col pb-16 md:pb-0">
+
+    <!-- SPLASH / ABERTURA -->
+    <div id="cvSplash" class="cv-splash" aria-hidden="true">
+        <div class="cv-splash-inner">
+            <div class="cv-splash-mark"><img src="assets/logo-mark.jpg" alt="Centavus"></div>
+            <div class="cv-splash-name">Centav<span>us</span></div>
+            <div class="cv-splash-sub">SMART FINANCE</div>
+            <div class="cv-splash-bar"><i></i></div>
+            <p class="cv-splash-hint">Organizando sua vida financeira…</p>
+        </div>
+    </div>
+
+    <!-- LOGIN / LANDING SCREEN -->
+    <section id="loginScreen" aria-label="Acesso ao Centavus">
+        <div class="login-bg"></div><div class="login-grid"></div><div class="login-orb one"></div><div class="login-orb two"></div>
+        <div class="login-wrap">
+            <div class="login-showcase">
+                <div>
+                    <div class="login-brand"><div class="login-brand-mark"><img src="assets/logo-mark.jpg" alt="Centavus"></div><div><div class="login-brand-name">Centavus</div><div class="text-[9px] text-[#6F807C] font-bold tracking-[.2em]">SMART FINANCE</div></div></div>
+                    <div class="mt-16">
+                        <div class="login-eyebrow"><i class="fa-solid fa-circle"></i> sua vida financeira, organizada</div>
+                        <h1 class="login-headline">Seu dinheiro merece <span>um plano.</span></h1>
+                        <p id="loginQuote" class="login-quote"><strong>“Organizar o dinheiro hoje é abrir espaço para realizar amanhã.”</strong><br>Tenha clareza sobre seus gastos, metas e escolhas.</p>
+                    </div>
+                </div>
+                <div class="login-bottom">
+                    <div class="login-chip"><i class="fa-solid fa-chart-line"></i> Visão do seu dinheiro</div>
+                    <div class="login-chip"><i class="fa-solid fa-bullseye"></i> Metas financeiras</div>
+                    <div class="login-chip"><i class="fa-solid fa-shield-halved"></i> Controle e privacidade</div>
+                </div>
+                <div class="login-visual"><div class="login-chart-card"></div><div class="login-float"><i class="fa-solid fa-arrow-trend-up mr-1"></i> +18,4% este mês</div></div>
+            </div>
+            <div class="login-panel">
+                <form id="loginForm" class="login-form" onsubmit="enterCentavus(event)" novalidate>
+                    <div class="login-mobile-brand">
+                        <div class="login-brand-mark"><img src="assets/logo-mark.jpg" alt="Centavus"></div>
+                        <div><div class="login-brand-name">Centavus</div><div class="text-[9px] text-[#6F807C] font-bold tracking-[.2em] text-center">SMART FINANCE</div></div>
+                    </div>
+                    <div class="text-[#70E0C0] text-[10px] font-extrabold tracking-[.18em] uppercase mb-3">Bem-vindo de volta</div>
+                    <h2>Acesse sua conta</h2>
+                    <p class="login-form-sub">Entre para acompanhar sua vida financeira em um só lugar.</p>
+                    <div id="loginError" class="login-error" role="alert" aria-live="polite">Preencha seu e-mail e sua senha para continuar.</div>
+                    <label class="login-label" for="loginEmail">E-mail</label>
+                    <div class="login-input-wrap"><i class="fa-solid fa-envelope"></i><input id="loginEmail" name="email" class="login-input" type="email" placeholder="voce@email.com" autocomplete="email" inputmode="email" spellcheck="false" required></div>
+                    <label class="login-label" for="loginPassword">Senha</label>
+                    <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="loginPassword" name="password" class="login-input" type="password" placeholder="Mínimo de 8 caracteres" autocomplete="current-password" minlength="8" required><button type="button" class="login-password-toggle" onclick="toggleLoginPassword()" aria-label="Mostrar ou ocultar senha"><i id="loginPasswordIcon" class="fa-solid fa-eye"></i></button></div>
+                    <div class="login-row"><label class="login-check"><input type="checkbox" id="rememberLogin"> Lembrar de mim</label><a href="#" class="login-link" onclick="forgotPassword(event)">Esqueci minha senha</a></div>
+                    <button id="loginSubmit" class="login-submit" type="submit"><i class="fa-solid fa-right-to-bracket mr-2"></i> Entrar no Centavus</button>
+                    <div class="login-hint" style="text-align:center;margin-top:16px;font-size:11px;">Ainda não tem uma conta? <a href="#" class="login-link" onclick="createCentavusAccount();return false;">Criar conta</a></div>
+                    <div id="loginDemoHint" class="login-demo">Primeiro acesso: <span>crie sua conta para entrar</span></div>
+                    <div class="login-security"><i class="fa-solid fa-shield-halved"></i> Conta protegida: senha com hash e sessão segura no servidor</div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/login-boot.js"></script>
+
+
+    <!-- CREATE ACCOUNT -->
+    <div id="registerModal" class="register-modal" role="dialog" aria-modal="true" aria-labelledby="registerTitle">
+        <div class="register-card">
+            <div class="flex items-center justify-between mb-5">
+                <div><div class="text-[#70E0C0] text-[10px] font-extrabold tracking-[.18em] uppercase mb-2">Comece agora</div><h3 id="registerTitle" class="font-[Manrope] text-2xl font-extrabold">Criar sua conta</h3></div>
+                <button type="button" class="register-close" onclick="closeRegister()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-[12px] text-[#6F807C] mb-5">Crie seu acesso ao Centavus para começar a organizar sua vida financeira.</p>
+            <div id="registerMessage" class="register-msg"></div>
+            <form id="registerForm" onsubmit="registerCentavus(event)" novalidate>
+                <label class="login-label" for="registerName">Nome</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-user"></i><input id="registerName" class="login-input" type="text" placeholder="Seu nome" autocomplete="name" required></div>
+                <label class="login-label" for="registerEmail">E-mail</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-envelope"></i><input id="registerEmail" class="login-input" type="email" placeholder="voce@email.com" autocomplete="email" required></div>
+                <label class="login-label" for="registerPassword">Senha</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="registerPassword" class="login-input" type="password" placeholder="Mínimo de 6 caracteres" autocomplete="new-password" minlength="6" required><button type="button" class="login-password-toggle" onclick="toggleRegisterPassword('registerPassword','registerPasswordIcon')" aria-label="Mostrar senha"><i id="registerPasswordIcon" class="fa-solid fa-eye"></i></button></div>
+                <label class="login-label" for="registerConfirm">Confirmar senha</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="registerConfirm" class="login-input" type="password" placeholder="Repita sua senha" autocomplete="new-password" required><button type="button" class="login-password-toggle" onclick="toggleRegisterPassword('registerConfirm','registerConfirmIcon')" aria-label="Mostrar senha"><i id="registerConfirmIcon" class="fa-solid fa-eye"></i></button></div>
+                <button class="login-submit mt-1" type="submit"><i class="fa-solid fa-user-plus mr-2"></i> Criar conta</button>
+            </form>
+            <div class="text-center mt-4 text-[11px] text-[#6F807C]">Já tem uma conta? <a href="#" class="login-link" onclick="closeRegister();return false;">Entrar</a></div>
+        </div>
+    </div>
+
+    <!-- REDEFINIR SENHA (link enviado por e-mail: index.html?reset=TOKEN) -->
+    <div id="resetModal" class="register-modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+        <div class="register-card">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <div class="text-[#70E0C0] text-[10px] font-extrabold tracking-[.18em] uppercase mb-2">Recuperação</div>
+                    <h3 id="resetTitle" class="font-[Manrope] text-2xl font-extrabold">Defina uma nova senha</h3>
+                </div>
+                <button type="button" class="register-close" onclick="closeResetModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-[12px] text-[#6F807C] mb-5">Escolha uma senha forte. Ao confirmar, todas as sessões abertas serão encerradas.</p>
+            <div id="resetError" class="login-error" role="alert" aria-live="polite"></div>
+            <form id="resetForm" onsubmit="handleResetSubmit(event)" novalidate>
+                <label class="login-label" for="resetPassword">Nova senha</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="resetPassword" class="login-input" type="password" placeholder="Mínimo de 8 caracteres" autocomplete="new-password" minlength="8" required><button type="button" class="login-password-toggle" onclick="toggleRegisterPassword('resetPassword','resetPasswordIcon')" aria-label="Mostrar senha"><i id="resetPasswordIcon" class="fa-solid fa-eye"></i></button></div>
+                <label class="login-label" for="resetConfirm">Confirmar nova senha</label>
+                <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="resetConfirm" class="login-input" type="password" placeholder="Repita a nova senha" autocomplete="new-password" minlength="8" required><button type="button" class="login-password-toggle" onclick="toggleRegisterPassword('resetConfirm','resetConfirmIcon')" aria-label="Mostrar senha"><i id="resetConfirmIcon" class="fa-solid fa-eye"></i></button></div>
+                <button class="login-submit mt-1" type="submit"><i class="fa-solid fa-key mr-2"></i> Salvar nova senha</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTA & CONFIGURAÇÕES -->
+    <div id="settingsModal" class="register-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="register-card">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <div class="text-[#70E0C0] text-[10px] font-extrabold tracking-[.18em] uppercase mb-2">Sua conta</div>
+                    <h3 id="settingsTitle" class="font-[Manrope] text-2xl font-extrabold">Conta & Configurações</h3>
+                </div>
+                <button type="button" class="register-close" onclick="closeSettings()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="bg-[#102020] border border-white/5 rounded-2xl p-4 mb-5">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-14 h-14 rounded-full border-2 border-[#30A080] bg-[#0d1615] overflow-hidden flex items-center justify-center shrink-0">
+                        <img id="settingsAvatarImg" src="" alt="Sua foto de perfil" class="avatar-img hidden">
+                        <span id="settingsInitials" class="text-sm font-extrabold text-[#70E0C0]">CV</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p id="settingsName" class="text-sm font-bold text-white truncate">Cliente</p>
+                        <p id="settingsEmail" class="text-[11px] text-[#6F807C] truncate">—</p>
+                        <div class="avatar-upload-actions">
+                            <button type="button" class="cv-cal-btn primary" onclick="document.getElementById('avatarInput').click()"><i class="fa-solid fa-camera mr-1"></i>Enviar foto</button>
+                            <button type="button" class="cv-cal-btn" id="avatarRemoveBtn" onclick="removeAvatar()"><i class="fa-solid fa-trash-can mr-1"></i>Remover</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[10px] text-[#53625f] mt-2.5 leading-relaxed">PNG ou JPG de até 4 MB. A foto é salva apenas neste dispositivo e aparece no topo do painel.</p>
+                <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleAvatarUpload(event)">
+            </div>
+
+            <!-- SEU NOME -->
+            <div class="mb-5">
+                <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold mb-2">Seu nome</p>
+                <div class="flex gap-2 flex-wrap">
+                    <div class="login-input-wrap" style="flex:1 1 180px;min-width:0;margin-bottom:0"><i class="fa-solid fa-user"></i><input id="settingsNameInput" class="login-input" type="text" placeholder="Como você quer ser chamado" maxlength="40" autocomplete="name" onkeydown="if(event.key==='Enter'){event.preventDefault();saveProfileName();}"></div>
+                    <button type="button" class="login-submit" style="flex:0 0 auto;width:auto;height:50px;padding:0 18px;white-space:nowrap" onclick="saveProfileName()"><i class="fa-solid fa-check mr-1.5"></i>Salvar</button>
+                </div>
+                <p class="text-[10px] text-[#53625f] mt-2 leading-relaxed">É o nome que aparece no topo ("Bem-vindo, ..."), no aviso de entrada e como titular dos cartões.</p>
+            </div>
+
+            <div class="mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Cor de destaque</p>
+                    <span id="themeName" class="text-[10px] text-[#70E0C0] font-bold">Esmeralda</span>
+                </div>
+                <div class="flex items-center gap-3" id="themeSwatches">
+                    <button type="button" class="cv-swatch active" data-theme="emerald" style="--sw1:#30A080;--sw2:#70E0C0" title="Esmeralda" onclick="setTheme('emerald')"><i class="fa-solid fa-check"></i></button>
+                    <button type="button" class="cv-swatch" data-theme="violet" style="--sw1:#8070F0;--sw2:#A090FF" title="Violeta" onclick="setTheme('violet')"><i class="fa-solid fa-check"></i></button>
+                    <button type="button" class="cv-swatch" data-theme="sunset" style="--sw1:#FF8E6B;--sw2:#FF6E9C" title="Pôr do sol" onclick="setTheme('sunset')"><i class="fa-solid fa-check"></i></button>
+                    <button type="button" class="cv-swatch" data-theme="ocean" style="--sw1:#3BA9E0;--sw2:#40C8A0" title="Oceano" onclick="setTheme('ocean')"><i class="fa-solid fa-check"></i></button>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Modo de aparência</p>
+                    <span id="modeName" class="text-[10px] text-[#70E0C0] font-bold">Escuro</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3" id="modeSwitch">
+                    <button type="button" id="modeDarkBtn" class="mode-opt active" onclick="setMode('dark')"><i class="fa-solid fa-moon"></i> Modo escuro</button>
+                    <button type="button" id="modeLightBtn" class="mode-opt" onclick="setMode('light')"><i class="fa-solid fa-sun"></i> Modo claro</button>
+                </div>
+                <p class="text-[10px] text-[#53625f] mt-2 leading-relaxed">O modo é guardado neste dispositivo e vale para a próxima abertura.</p>
+            </div>
+
+            <!-- SEGURANÇA DA CONTA -->
+            <div class="mb-5">
+                <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold mb-2">Segurança</p>
+                <form id="changePasswordForm" onsubmit="handleChangePassword(event)" novalidate class="space-y-2">
+                    <div class="login-input-wrap"><i class="fa-solid fa-lock"></i><input id="currentPassword" class="login-input" type="password" placeholder="Senha atual" autocomplete="current-password" required></div>
+                    <div class="login-input-wrap"><i class="fa-solid fa-key"></i><input id="newPassword" class="login-input" type="password" placeholder="Nova senha (mínimo de 8)" autocomplete="new-password" minlength="8" required></div>
+                    <div class="login-input-wrap"><i class="fa-solid fa-key"></i><input id="confirmPassword" class="login-input" type="password" placeholder="Repita a nova senha" autocomplete="new-password" minlength="8" required></div>
+                    <div id="passwordMsg" class="register-msg" style="display:none"></div>
+                    <button class="login-submit" type="submit"><i class="fa-solid fa-shield-halved mr-2"></i> Alterar senha</button>
+                </form>
+            </div>
+
+            <div class="space-y-2">
+                <button type="button" onclick="openRendaFixa()" class="w-full text-left px-3.5 py-3 text-xs text-[#F5F7F6] bg-[#102020] hover:bg-[#204040] border border-white/5 rounded-xl flex items-center gap-3 transition">
+                    <i class="fa-solid fa-wallet text-[#70E0C0] w-4"></i> Renda Fixa — valor do salário
+                </button>
+                <button type="button" onclick="exportToCSV()" class="w-full text-left px-3.5 py-3 text-xs text-[#F5F7F6] bg-[#102020] hover:bg-[#204040] border border-white/5 rounded-xl flex items-center gap-3 transition">
+                    <i class="fa-solid fa-file-csv text-[#40C8A0] w-4"></i> Exportar movimentações (CSV)
+                </button>
+                <button type="button" onclick="logoutCentavus(event)" class="w-full text-left px-3.5 py-3 text-xs text-[#ff9aa5] bg-[#102020] hover:bg-[#ff5064]/10 border border-[#ff5064]/20 rounded-xl flex items-center gap-3 transition">
+                    <i class="fa-solid fa-power-off w-4"></i> Sair da conta
+                </button>
+                <input type="file" id="importBackupInput" accept="application/json,.json" class="hidden" onchange="importBackup(event)">
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-white/5 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-[#53625f]">
+                <span><b class="text-[#A8B5B2]">Ctrl+B</b> novo lançamento</span>
+                <span><b class="text-[#A8B5B2]">Esc</b> fechar painéis</span>
+            </div>
+
+            <p id="settingsDataNote" class="text-[10px] text-[#53625f] mt-5 leading-relaxed">Seus dados ficam salvos na sua conta Centavus (servidor + SQLite) e são sincronizados a cada alteração. Neste aparelho fica apenas uma cópia de cache, para abrir rápido e funcionar offline.</p>
+        </div>
+    </div>
+
+    <!-- TOP HEADER -->
+    <header class="h-20 border-b border-white/5 bg-[#101010]/95 backdrop-blur-md sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
+        <div class="flex items-center gap-6 md:gap-10 min-w-0">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="resetAllFilters()">
+                <div class="header-brand-mark w-10 h-10 rounded-2xl shrink-0 border border-white/10 shadow-[0_0_20px_rgba(48,160,128,0.35)]">
+                    <img src="assets/logo-mark.jpg" alt="Centavus">
+                </div>
+                <div class="header-brand-text">
+                    <span class="text-xl font-extrabold tracking-tight text-white block leading-none brand-font">Centavus</span>
+                    <span class="text-[10px] text-[#6F807C] font-bold tracking-widest uppercase block mt-1">SMART FINANCE</span>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Right Header Actions & Privacy Toggle & Profile -->
+        <div class="flex items-center gap-3 md:gap-4 shrink-0">
+            
+            <!-- Privacy Toggle Button -->
+            <button onclick="togglePrivacyMode()" title="Alternar visibilidade de valores" 
+                    class="w-10 h-10 rounded-xl bg-[#203030] hover:bg-[#204040] text-[#A8B5B2] hover:text-[#70E0C0] flex items-center justify-center transition border border-white/5">
+                <i id="privacyEyeIcon" class="fa-solid fa-eye"></i>
+            </button>
+
+            <!-- MODO CLARO / ESCURO -->
+            <button id="modeToggleBtn" onclick="toggleMode()" title="Ativar o modo claro"
+                    class="w-10 h-10 rounded-xl bg-[#203030] hover:bg-[#204040] text-[#A8B5B2] hover:text-[#70E0C0] flex items-center justify-center transition border border-white/5" aria-label="Alternar entre modo escuro e modo claro">
+                <i id="modeIcon" class="fa-solid fa-sun"></i>
+            </button>
+
+            <!-- Quick Export Menu Button -->
+            <div class="relative">
+                <button onclick="toggleExportDropdown()" class="hidden md:flex w-10 h-10 rounded-xl bg-[#203030] hover:bg-[#204040] text-[#A8B5B2] hover:text-white items-center justify-center transition border border-white/5" title="Exportar dados">
+                    <i class="fa-solid fa-download text-sm"></i>
+                </button>
+                <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 centavus-card p-2 z-50 shadow-2xl border border-white/10">
+                    <button onclick="exportToCSV()" class="w-full text-left px-3 py-2 text-xs text-[#F5F7F6] hover:bg-[#30A080]/20 rounded-xl flex items-center gap-2 transition">
+                        <i class="fa-solid fa-file-csv text-[#30A080]"></i> Exportar CSV
+                    </button>
+                    <button onclick="printReport()" class="w-full text-left px-3 py-2 text-xs text-[#F5F7F6] hover:bg-[#8070F0]/20 rounded-xl flex items-center gap-2 transition mt-1">
+                        <i class="fa-solid fa-print text-[#8070F0]"></i> Imprimir Relatório
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add Transaction Button -->
+            <button onclick="openModal()" title="Nova transação" aria-label="Nova transação" class="hidden sm:flex items-center gap-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition shadow-[0_4px_15px_rgba(48,160,128,0.3)] hover:shadow-[0_0_20px_rgba(64,200,160,0.5)] shrink-0">
+                <i class="fa-solid fa-plus text-xs"></i>
+                <span class="hidden lg:inline">Nova Transação</span>
+            </button>
+
+            <!-- PLANOS (badge do plano) -->
+            <button onclick="cvAbrirPlanos()" title="Planos e assinatura" aria-label="Ver planos do Centavus" class="flex items-center gap-2 h-10 px-3 rounded-xl bg-[#203030] hover:bg-[#304040] border border-[#FFD166]/25 text-[#FFD166] hover:text-[#FFE29A] transition shrink-0">
+                <i class="fa-solid fa-crown text-sm"></i>
+                <span id="cvPlanPill" class="text-[10px] font-extrabold uppercase tracking-wider">Grátis</span>
+            </button>
+
+            <!-- Notifications Center Toggle -->
+            <div class="relative">
+                <button onclick="toggleNotifications()" class="w-10 h-10 rounded-xl bg-[#203030] hover:bg-[#204040] text-[#A8B5B2] hover:text-white flex items-center justify-center transition border border-white/5 relative" title="Notificações" aria-label="Notificações">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="notifBadge" class="cv-notif-badge hidden">0</span>
+                </button>
+                
+                <!-- Notifications Box -->
+                <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 centavus-card p-4 z-50 shadow-2xl border border-white/10 space-y-3">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Notificações</h4>
+                        <span id="notifCount" class="text-[10px] bg-[#8070F0]/20 text-[#A090FF] px-2 py-0.5 rounded-full font-semibold">0 novas</span>
+                    </div>
+                    <div id="notifList" class="space-y-2 text-xs max-h-72 overflow-y-auto modal-scroll"></div>
+                    <div class="flex items-center justify-between border-t border-white/5 pt-2">
+                        <button type="button" class="cv-link-btn" onclick="markAllNotifsRead()"><i class="fa-solid fa-check-double mr-1"></i>Marcar como lidas</button>
+                        <button type="button" class="cv-link-btn" onclick="clearNotifs()"><i class="fa-solid fa-trash-can mr-1"></i>Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile Avatar -->
+            <div class="flex items-center gap-3 pl-2 border-l border-white/10">
+                <div class="text-right hidden lg:flex lg:flex-col lg:items-end leading-tight">
+                    <p class="text-[11px] text-[#6F807C] font-medium">Bem-vindo, <span id="userNameDisplay" class="text-[#F5F7F6] font-semibold">Cliente</span></p>
+                </div>
+
+                <!-- Sair da conta -->
+                <button onclick="logoutCentavus(event)" title="Sair da conta"
+                        class="w-10 h-10 rounded-xl bg-[#203030] hover:bg-[#30A080]/30 hover:text-[#70E0C0] text-[#A8B5B2] flex items-center justify-center transition border border-white/5">
+                    <i class="fa-solid fa-power-off text-sm"></i>
+                </button>
+
+                <div class="relative group cursor-pointer" onclick="openSettings()" title="Conta e configurações">
+                    <div class="w-10 h-10 rounded-full border-2 border-[#30A080] bg-[#102020] shadow-[0_0_12px_rgba(48,160,128,0.3)] flex items-center justify-center overflow-hidden">
+                        <img id="userAvatarImg" src="" alt="Sua foto de perfil" class="avatar-img hidden">
+                        <span id="userAvatarInitials" class="text-xs font-extrabold text-[#70E0C0] tracking-wide">CV</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BUSCA + DATA DO DIA (MOBILE / TABLET) -->
+    <div class="lg:hidden px-4 pt-4">
+        <div class="flex items-center gap-3">
+
+            <div class="shrink-0 centavus-pill-search flex items-center gap-2.5 px-3 py-1.5" aria-label="Data de hoje">
+                <i class="fa-solid fa-calendar text-[#70E0C0] text-xs"></i>
+                <span class="flex flex-col leading-tight text-right">
+                    <span class="js-weekday text-[8.5px] font-extrabold uppercase tracking-[.14em] text-[#70E0C0]">—</span>
+                    <span class="js-date-full text-[10.5px] font-bold text-[#F5F7F6] whitespace-nowrap">-- de ---- de ----</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION CONTAINER -->
+    <div class="flex flex-1 relative">
+
+        <!-- COLLAPSIBLE MINIMALIST SIDEBAR (DESKTOP) -->
+        <aside id="sidebar" class="w-20 hover:w-64 transition-all duration-300 bg-[#101010] border-r border-white/5 py-6 hidden md:flex flex-col justify-between z-30 group sticky top-20 h-[calc(100vh-5rem)] shrink-0 self-start">
+            <div class="flex flex-col gap-2 px-3">
+                <a href="#" data-section="dashboard" onclick="setActiveNav(this, 'dashboard');return false;" class="nav-item active flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-house-chimney text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Dashboard</span>
+                </a>
+                <a href="#" data-section="movimentacoes" onclick="setActiveNav(this, 'movimentacoes');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-receipt text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Movimentações</span>
+                </a>
+                <a href="#" data-section="contas" onclick="setActiveNav(this, 'contas');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-wallet text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Contas</span>
+                </a>
+                <a href="#" data-section="cartoes" onclick="setActiveNav(this, 'cartoes');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-credit-card text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Cartões</span>
+                </a>
+                <a href="#" data-section="relatorios" onclick="setActiveNav(this, 'relatorios');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-chart-pie text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Relatórios</span>
+                </a>
+                <a href="#" data-section="metas" onclick="setActiveNav(this, 'metas');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-bullseye text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Metas & Alocação</span>
+                </a>
+                <a href="#" data-section="cofrinho" onclick="setActiveNav(this, 'cofrinho');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-piggy-bank text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Cofrinho (CDI)</span>
+                </a>
+                <a href="#" data-section="zap" onclick="setActiveNav(this, 'zap');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-brands fa-whatsapp text-lg w-6 text-center text-[#40C8A0]"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Centavus Zap</span>
+                </a>
+            </div>
+
+            <!-- RODAPÉ DA BARRA LATERAL: Planos + Configurações -->
+            <div class="px-3">
+                <a href="#" data-section="planos" onclick="setActiveNav(this, 'planos');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-crown text-lg w-6 text-center text-[#FFD166]"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Planos</span>
+                </a>
+                <a href="#" data-section="config" onclick="setActiveNav(this, 'config');return false;" class="nav-item flex items-center gap-4 px-3.5 py-3.5">
+                    <i class="fa-solid fa-gear text-lg w-6 text-center"></i>
+                    <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Configurações</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT BOARD -->
+        <main class="flex-1 p-4 md:p-8 overflow-x-hidden space-y-6">
+            
+            <!-- CONTROLS & TIME FILTER BAR -->
+            <div id="secDashboard" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#102020]/60 p-4 rounded-2xl border border-white/5">
+                <div>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">Visão Geral da Carteira</h1>
+                    <p class="text-xs text-[#A8B5B2] mt-0.5">Acompanhamento consolidado de movimentações e patrimônio</p>
+                </div>
+
+                <!-- Calendário (substitui os filtros 7D / 1M / 6M / 1Y) -->
+                <div id="calWrap" class="relative self-start sm:self-auto shrink-0">
+                    <!-- setas do MÊS -->
+                    <div class="flex items-stretch gap-1.5">
+                        <button type="button" class="cal-arrow" onclick="calNavMonth(-1)" title="Mês anterior" aria-label="Mês anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button type="button" id="calToggleBtn" class="cal-trigger" onclick="toggleCalendar()" aria-haspopup="dialog" aria-expanded="false" aria-label="Abrir calendário para escolher a data">
+                            <span class="cal-ico"><i class="fa-solid fa-calendar"></i></span>
+                            <span class="flex flex-col leading-tight min-w-0">
+                                <span class="cal-trigger-label">Data das movimentações</span>
+                                <span id="calBtnValue" class="cal-trigger-value">Todas as datas</span>
+                            </span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <button type="button" class="cal-arrow" onclick="calNavMonth(1)" title="Próximo mês" aria-label="Próximo mês"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+
+                    <!-- setas do DIA -->
+                    <div class="flex items-center justify-center gap-1.5 mt-1.5">
+                        <button type="button" class="cal-arrow sm" onclick="calNavDay(-1)" title="Dia anterior" aria-label="Dia anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="calDayValue" class="cal-day-chip" title="Dia escolhido">—</span>
+                        <button type="button" class="cal-arrow sm" onclick="calNavDay(1)" title="Próximo dia" aria-label="Próximo dia"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+
+                    <div id="calPopover" class="cv-cal hidden" role="dialog" aria-label="Calendário de datas">
+                        <div class="cv-cal-head">
+                            <button type="button" class="cv-cal-nav" onclick="calStep(-1)" aria-label="Mês anterior"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                            <button type="button" id="calMonthLabel" class="cv-cal-title" onclick="calToggleYears()" title="Escolher mês e ano" aria-label="Escolher mês e ano">—</button>
+                            <button type="button" class="cv-cal-nav" onclick="calStep(1)" aria-label="Próximo mês"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                        </div>
+                        <div class="cv-cal-yearbar">
+                            <button type="button" class="cv-cal-nav sm" onclick="calYearStep(-1)" aria-label="Ano anterior"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                            <button type="button" id="calYearLabel" class="cv-cal-year" onclick="calToggleYears()" title="Escolher o ano" aria-label="Escolher o ano">2026<i class="fa-solid fa-caret-down"></i></button>
+                            <button type="button" class="cv-cal-nav sm" onclick="calYearStep(1)" aria-label="Próximo ano"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                        </div>
+                        <div class="cv-cal-week"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div>
+                        <div id="calGrid" class="cv-cal-grid"></div>
+                        <div class="cv-cal-foot">
+                            <div id="calSelectedText" class="cv-cal-selected"><b>Nenhuma data selecionada</b>Mostrando todas as movimentações</div>
+                            <div class="cv-cal-actions">
+                                <button type="button" class="cv-cal-btn primary" onclick="calSelectToday()"><i class="fa-solid fa-calendar-check mr-1"></i>Hoje</button>
+                                <button type="button" class="cv-cal-btn" onclick="calClear()">Limpar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERÍODO DO PAINEL (controlado pelo calendário "Data das movimentações") -->
+            <p class="text-xs text-[#6F807C] mb-2"><i class="fa-solid fa-calendar-days text-[#40C8A0] mr-1"></i>Cartões, gráficos, taxa, extrato e parcelas contam a partir do calendário <strong class="text-[#A8B5B2]">Data das movimentações</strong>: escolha um dia para ver aquele mês ou clique em <strong class="text-[#A8B5B2]">Limpar</strong> para ver todos os meses.</p>
+
+            <!-- HERO STATS CARDS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Total Balance Card -->
+                <div class="centavus-card p-6 relative overflow-hidden group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-[#A8B5B2] uppercase tracking-wider">Saldo Total Consolidado</span>
+                        <div class="w-8 h-8 rounded-xl bg-[#30A080]/15 flex items-center justify-center text-[#30A080]">
+                            <i class="fa-solid fa-wallet text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="financial-value-lg mb-2 confidential-value" data-value="0" id="totalBalanceDisplay">R$ 0,00</div>
+                    <div class="flex items-center gap-2" id="badgeBalance">
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-[#40C8A0] bg-[#30A080]/15 px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-wallet text-[10px]"></i> Consolidado
+                        </span>
+                        <span class="text-xs text-[#6F807C]">extrato + cofrinho</span>
+                    </div>
+                </div>
+
+                <!-- Monthly Income Card -->
+                <div class="centavus-card p-6 relative overflow-hidden group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-[#A8B5B2] uppercase tracking-wider">Entradas no Mês</span>
+                        <div class="w-8 h-8 rounded-xl bg-[#40C8A0]/15 flex items-center justify-center text-[#40C8A0]">
+                            <i class="fa-solid fa-arrow-down text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="financial-value-lg text-white mb-2 confidential-value" data-value="8420.00" id="totalIncomeDisplay">R$ 8.420,00</div>
+                    <div class="flex items-center gap-2" id="badgeIncome">
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-[#A8B5B2] bg-[#203030] px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-circle-minus text-[10px]"></i> sem receitas
+                        </span>
+                        <span class="text-xs text-[#6F807C]">sem movimentações</span>
+                    </div>
+                </div>
+
+                <!-- Monthly Expenses Card -->
+                <div class="centavus-card p-6 relative overflow-hidden group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-[#A8B5B2] uppercase tracking-wider">Saídas no Mês</span>
+                        <div class="w-8 h-8 rounded-xl bg-[#8070F0]/15 flex items-center justify-center text-[#8070F0]">
+                            <i class="fa-solid fa-arrow-up text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="financial-value-lg text-white mb-2 confidential-value" data-value="2440.00" id="totalExpenseDisplay">R$ 2.440,00</div>
+                    <div class="flex items-center gap-2" id="badgeExpense">
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-[#A8B5B2] bg-[#203030] px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-circle-minus text-[10px]"></i> sem despesas
+                        </span>
+                        <span class="text-xs text-[#6F807C]">sem movimentações</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SMART FINANCIAL SNAPSHOT -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="stat-mini rounded-2xl p-4 cursor-pointer hover:border-[#30A080]/40 hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-[#30A080]/50" role="button" tabindex="0" title="Clique para definir o valor do seu salário" aria-label="Saldo disponível — clique para definir o valor do seu salário" onclick="openSalaryFromBalance()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSalaryFromBalance();}"><div class="flex justify-between"><span class="text-xs text-[#A8B5B2]">Saldo disponível</span><i class="fa-solid fa-sack-dollar text-[#40C8A0]"></i></div><div id="availableBalance" class="text-xl font-bold mt-2">R$ 5.980,50</div><p id="availableBalanceHint" class="text-[11px] text-[#6F807C] mt-1">Entradas − saídas (com salário)</p><p class="text-[10px] text-[#70E0C0] mt-1"><i class="fa-solid fa-pen text-[9px]"></i> Clique para definir seu salário</p></div>
+                <div class="stat-mini rounded-2xl p-4"><div class="flex justify-between"><span class="text-xs text-[#A8B5B2]">Taxa de economia</span><i class="fa-solid fa-piggy-bank text-[#70E0C0]"></i></div><div id="savingRate" class="text-xl font-bold mt-2">71,0%</div><p id="savingRateHint" class="text-[11px] text-[#6F807C] mt-1">Do total recebido</p></div>
+                <div class="stat-mini rounded-2xl p-4"><div class="flex justify-between"><span class="text-xs text-[#A8B5B2]">Próxima fatura</span><i class="fa-solid fa-credit-card text-[#8070F0]"></i></div><div id="nextInvoiceValue" class="text-xl font-bold mt-2 confidential-value" data-value="0">R$ 0,00</div><p id="nextInvoiceDue" class="text-[11px] text-[#6F807C] mt-1">Sem cartões com fatura</p></div>
+            </div>
+
+            <!-- BOTTOM SECTION: TRANSACTIONS TABLE -->
+            <div class="grid grid-cols-1 gap-6">
+                
+                <!-- Recent Transactions List with Advanced Controls -->
+                <div id="secMovimentacoes" class="centavus-card p-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Header & Advanced Filters -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-white">Extrato de Movimentações</h3>
+                                <p class="text-xs text-[#6F807C] mt-0.5" id="transactionFilterBadge">Exibindo todas as movimentações</p>
+                            </div>
+
+                            <div class="cv-filter-bar">
+                                <div class="cv-search">
+                                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                    <input id="searchInput" type="search" placeholder="Buscar por descrição ou categoria…" aria-label="Buscar movimentações" oninput="handleGlobalSearch('desktop')">
+                                    <button type="button" class="cv-search-clear" onclick="document.getElementById('searchInput').value='';applyFilters()" aria-label="Limpar busca"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <!-- Type Selector -->
+                                    <select id="filterTypeSelect" onchange="applyFilters()" class="cv-filter-select" aria-label="Filtrar por tipo">
+                                        <option value="ALL">Todas</option>
+                                        <option value="ENTRADA">Apenas Entradas (+)</option>
+                                        <option value="SAIDA">Apenas Saídas (-)</option>
+                                    </select>
+
+                                    <!-- Category Selector -->
+                                    <select id="filterCatSelect" onchange="applyFilters()" class="cv-filter-select" aria-label="Filtrar por categoria">
+                                        <option value="">Todas as categorias</option>
+                                    </select>
+
+                                    <!-- Card Selector -->
+                                    <select id="filterCardSelect" onchange="applyFilters()" class="cv-filter-select" aria-label="Filtrar por cartão">
+                                        <option value="">Todos os cartões</option>
+                                    </select>
+
+                                    <!-- Sorting Selector -->
+                                    <select id="filterSortSelect" onchange="applyFilters()" class="cv-filter-select" aria-label="Ordenar">
+                                        <option value="NEWEST">Mais recentes</option>
+                                        <option value="OLDEST">Mais antigos</option>
+                                        <option value="HIGHEST">Maior valor</option>
+                                        <option value="LOWEST">Menor valor</option>
+                                        <option value="ALPHA">A–Z (descrição)</option>
+                                    </select>
+
+                                    <button onclick="resetAllFilters()" class="text-xs bg-[#204040] hover:bg-[#30A080] text-white px-3 py-1.5 rounded-xl transition font-medium">
+                                        Limpar
+                                    </button>
+                                </div>
+
+                                <div class="cv-period">
+                                    <label class="cv-period-field">
+                                        <span>De</span>
+                                        <input type="date" id="filterDateFrom" onchange="applyFilters()" aria-label="Data inicial">
+                                    </label>
+                                    <label class="cv-period-field">
+                                        <span>Até</span>
+                                        <input type="date" id="filterDateTo" onchange="applyFilters()" aria-label="Data final">
+                                    </label>
+                                    <span id="periodHint" class="cv-period-hint"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transactions Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[540px]">
+                                <thead>
+                                    <tr class="border-b border-white/5 text-[11px] uppercase tracking-wider text-[#6F807C]">
+                                        <th class="pb-3 font-semibold">Descrição / Categoria</th>
+                                        <th class="pb-3 font-semibold">Mês / Data</th>
+                                        <th class="pb-3 font-semibold text-right">Valor</th><th class="pb-3 font-semibold text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsTableBody" class="divide-y divide-white/5 text-sm">
+                                    <!-- Dynamic rows loaded via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Footer Table Pagination / Summary -->
+                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[#A8B5B2]">
+                        <span id="transactionCountText">Mostrando 7 transações</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="exportToCSV()" class="text-[#30A080] hover:text-[#40C8A0] font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-file-export"></i> Baixar CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CHARTS SECTION (GRID) -->
+            <!-- CONTAS BANCÁRIAS (item 7) -->
+            <section id="secContas" class="cv-reveal centavus-card p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-wallet text-[#70E0C0]"></i> Contas</h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Conta corrente, poupança, dinheiro e investimentos — cada um com o seu saldo</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="openAccountModal()" class="text-xs bg-[#30A080] hover:bg-[#40C8A0] text-white px-3.5 py-2 rounded-xl font-semibold transition"><i class="fa-solid fa-plus mr-1"></i> Nova conta</button>
+                        <button type="button" onclick="openTransferModal()" class="text-xs bg-[#204040] hover:bg-[#30A080] text-white px-3.5 py-2 rounded-xl font-semibold transition"><i class="fa-solid fa-right-left mr-1"></i> Transferir</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="accountsSummary"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="accountsGrid"></div>
+
+                <div id="accountsEmpty" class="cv-empty hidden mt-4">
+                    <i class="fa-solid fa-wallet text-3xl text-[#30A080] mb-3"></i>
+                    <p class="text-sm font-bold text-white">Nenhuma conta cadastrada</p>
+                    <p class="text-xs text-[#6F807C] mt-1 leading-relaxed">Crie sua conta corrente, poupança ou carteira de investimentos para acompanhar o saldo de cada uma.</p>
+                    <button type="button" onclick="openAccountModal()" class="mt-4 text-xs bg-[#30A080] hover:bg-[#40C8A0] text-white px-4 py-2 rounded-xl font-semibold transition">Criar primeira conta</button>
+                </div>
+
+                <div id="transfersWrap" class="hidden mt-6 pt-4 border-t border-white/5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-right-left text-[#70E0C0]"></i> Transferências recentes</h4>
+                        <span class="text-[10px] text-[#6F807C]">não entram em entradas nem saídas</span>
+                    </div>
+                    <div id="transfersList" class="space-y-2 max-h-48 overflow-y-auto modal-scroll pr-1"></div>
+                </div>
+            </section>
+
+            <!-- CARDS + INSIGHTS -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="centavus-card p-6 lg:col-span-2"><div class="flex justify-between items-center mb-4"><div><h3 class="text-base font-bold">Resumo do cartão</h3><p class="text-xs text-[#6F807C]">Acompanhe a próxima fatura e o limite</p></div><button onclick="openCardModal()" class="text-xs bg-[#204040] hover:bg-[#30A080] px-3 py-1.5 rounded-xl font-semibold">Gerenciar</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="bg-[#102020] rounded-xl p-3"><p class="text-[10px] text-[#6F807C]">Fatura atual</p><strong id="resumoFatura" class="confidential-value" data-value="1284.70">R$ 1.284,70</strong></div><div class="bg-[#102020] rounded-xl p-3"><p class="text-[10px] text-[#6F807C]">Limite</p><strong id="resumoLimite" class="confidential-value" data-value="5000">R$ 5.000</strong></div><div class="bg-[#102020] rounded-xl p-3"><p class="text-[10px] text-[#6F807C]">Disponível</p><strong id="resumoDisponivel" class="text-[#40C8A0] confidential-value" data-value="3715.30">R$ 3.715,30</strong></div><div class="bg-[#102020] rounded-xl p-3"><p class="text-[10px] text-[#6F807C]">Próximo vencimento</p><strong id="resumoVencimento" class="confidential-value" data-value="Dia 5">Dia 5</strong></div></div><div class="mt-4 budget-bar"><div id="resumoBarra" class="budget-fill bg-gradient-to-r from-[#30A080] to-[#8070F0]" style="width:25.7%"></div></div></div>
+              <div class="centavus-card p-6"><h3 class="text-base font-bold">Insights do mês</h3><div id="insights" class="space-y-3 mt-4"></div></div>
+            </div>
+
+            <!-- ==================== ÁREA DE CARTÕES ==================== -->
+            <section id="secCartoes" class="cv-reveal centavus-card p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-credit-card text-[#70E0C0]"></i> Meus Cartões
+                        </h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Limite, fatura e vencimento de cada cartão em um só lugar</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div id="cardsTotals" class="cards-totals"></div>
+                        <button onclick="openCardModal()" class="shrink-0 text-xs font-bold bg-[#30A080] hover:bg-[#40C8A0] text-white px-4 py-2.5 rounded-xl transition shadow-[0_4px_15px_rgba(48,160,128,0.25)]">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Novo cartão
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+
+                <div id="cardsEmpty" class="cv-empty hidden">
+                    <i class="fa-solid fa-credit-card text-2xl text-[#30A080]"></i>
+                    <p class="text-sm text-[#A8B5B2] mt-2 font-semibold">Nenhum cartão cadastrado</p>
+                    <p class="text-xs text-[#6F807C] mt-1">Cadastre seus cartões para acompanhar limite, fatura e dias de fechamento.</p>
+                    <button onclick="openCardModal()" class="mt-4 px-4 py-2.5 rounded-xl bg-[#30A080] hover:bg-[#40C8A0] text-white text-xs font-bold transition">
+                        <i class="fa-solid fa-plus mr-1.5"></i> Adicionar cartão
+                    </button>
+                </div>
+            </section>
+
+            <!-- ANÁLISE (item 4): patrimônio -->
+            <div class="centavus-card p-6">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white">Evolução do patrimônio</h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Próximos 12 meses: entradas (com o salário fixo) contra saídas e o patrimônio acumulado</p>
+                    </div>
+                    <span class="text-[11px] font-bold text-[#70E0C0] bg-[#30A080]/12 px-2.5 py-1 rounded-lg whitespace-nowrap" id="wealthNow">—</span>
+                </div>
+                <div class="relative" style="height:260px"><canvas id="wealthChart"></canvas></div>
+                <div id="wealthEmpty" class="cv-empty hidden mt-2">
+                    <i class="fa-solid fa-chart-line text-2xl text-[#30A080] mb-2"></i>
+                    <p class="text-xs text-[#6F807C]">Registre movimentações para ver a evolução do seu patrimônio.</p>
+                </div>
+            </div>
+
+            <div class="centavus-card p-6">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white" id="compareTitle">Mês atual × mês anterior</h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5" id="compareSubtitle">Comparativo real das suas movimentações</p>
+                    </div>
+                </div>
+                <div id="compareGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                <div class="relative mt-5" style="height:220px"><canvas id="compareChart"></canvas></div>
+            </div>
+
+            <div id="secRelatorios" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- VISÃO FINANCEIRA DO MÊS (RECEITAS · DESPESAS · SALDO) -->
+                <div class="lg:col-span-2 centavus-card p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+                                Visão financeira do mês
+                            </h3>
+                            <p class="text-xs text-[#6F807C] mt-0.5" id="visaoSubtitle">Receitas, despesas e saldo</p>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-4 text-xs font-medium">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#40C8A0]"></span>
+                                <span class="text-[#A8B5B2]">Receitas</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#F7806E]"></span>
+                                <span class="text-[#A8B5B2]">Despesas</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#8070F0]"></span>
+                                <span class="text-[#A8B5B2]">Saldo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Wrapper -->
+                    <div class="relative h-72 w-full mt-2">
+                        <canvas id="monthlyBarChart"></canvas>
+                    </div>
+
+                    <!-- Interactive Selected Info Footer -->
+                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
+                        <span class="text-[#A8B5B2]" id="chartSelectedPeriodText">Mês Focado: <strong class="text-[#8070F0]">Julho</strong></span>
+                        <button onclick="resetSelectedMonth()" class="text-[#70E0C0] hover:underline font-semibold">Exibir Histórico Completo</button>
+                    </div>
+                </div>
+
+                <!-- TOP GASTOS (MAIORES CATEGORIAS DO MÊS) -->
+                <div class="centavus-card p-6 flex flex-col">
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#F7806E]"></span> Top gastos
+                            </h3>
+                            <span class="text-xs bg-[#204040] text-[#70E0C0] px-2.5 py-1 rounded-full font-medium" id="categoryBadgeText">Julho</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-xs text-[#6F807C]">Maiores categorias do mês · clique para filtrar</p>
+                            <span class="text-xs font-bold text-white confidential-value" data-value="0" id="topGastosTotal">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <!-- Ranking dinâmico: posição, categoria, valor e barra de participação -->
+                    <div class="mt-3 space-y-1" id="topGastosContainer"></div>
+                </div>
+
+                <!-- GASTOS E DESPESAS POR MÊS (COLUNAS) -->
+                <div class="lg:col-span-2 centavus-card p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#F7806E]"></span>
+                                Entradas e Saídas — Mês a Mês
+                            </h3>
+                            <p class="text-xs text-[#6F807C] mt-0.5">Colunas de entrada e saída de cada mês — clique numa coluna para focar o mês</p>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-4 text-xs font-medium shrink-0">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#40C8A0]"></span>
+                                <span class="text-[#A8B5B2]">Receitas</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#F7806E]"></span>
+                                <span class="text-[#A8B5B2]">Despesas</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-md bg-[#FFB4A8]"></span>
+                                <span class="text-[#A8B5B2]">Mês Selecionado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative h-72 w-full mt-2">
+                        <canvas id="expenseBarChart"></canvas>
+                        <div id="expChartEmpty" class="absolute inset-0 hidden">
+                            <div class="w-full h-full flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                                <i class="fa-solid fa-chart-column text-3xl text-[#F7806E]/70"></i>
+                                <p class="text-sm text-[#A8B5B2] font-semibold mt-2">Nenhuma movimentação lançada ainda</p>
+                                <p class="text-[11px] text-[#6F807C] mt-1">As colunas de entrada e saída aparecem aqui mês a mês assim que você registrar algo em Nova Transação.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs">
+                        <span class="text-[#A8B5B2]">Entradas no ano <strong id="expIncomeYear" class="text-[#70E0C0] confidential-value" data-value="0">R$ 0,00</strong></span>
+                        <span class="text-[#A8B5B2]">Saídas no ano <strong id="expTotalYear" class="text-[#F7806E] confidential-value" data-value="0">R$ 0,00</strong></span>
+                        <span class="text-[#A8B5B2]">Mês mais caro <strong id="expWorstMonth" class="text-[#FFB4A8]">—</strong></span>
+                        <span class="text-[#A8B5B2]">Mês focado <strong id="expFocusedMonth" class="text-[#F7806E]">—</strong></span>
+                    </div>
+                </div>
+
+                <!-- RESUMO DE GASTOS -->
+                <div class="centavus-card p-6">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-[#F7806E]"></i> Resumo de Gastos
+                        </h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Quanto saiu do bolso, mês a mês</p>
+                    </div>
+                    <div id="expSummary" class="space-y-2.5"></div>
+                </div>
+            </div>
+
+            <!-- RECURSOS PREMIUM (Projeção do fim de mês · Detector de vazamentos · Mapa de calor)
+                 No plano Grátis aparecem borrados com cadeado (modelo Pierre) — js/premiumFeatures.js -->
+            <div id="cvExtrasGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-6"></div>
+
+            <!-- ORÇAMENTOS POR CATEGORIA (item 3) -->
+            <section id="secOrcamentos" class="cv-reveal centavus-card p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-white/5 pb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-[#40C8A0]"></i> Orçamentos do mês
+                        </h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Limite por categoria × o que já foi gasto</p>
+                    </div>
+                    <button onclick="openBudgetModal()" class="shrink-0 text-xs font-bold bg-[#30A080] hover:bg-[#40C8A0] text-white px-4 py-2.5 rounded-xl transition shadow-[0_4px_15px_rgba(48,160,128,0.25)]">
+                        <i class="fa-solid fa-pen mr-1.5"></i> Editar orçamentos
+                    </button>
+                </div>
+                <div id="budgetGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <!-- EVOLUÇÃO DAS METAS (item 4) -->
+            <div class="centavus-card p-6">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white">Evolução das metas</h3>
+                        <p class="text-xs text-[#6F807C] mt-0.5">Progresso médio registrado a cada alteração das suas metas</p>
+                    </div>
+                    <div class="cv-legend" style="margin-top:0"><span><i style="background:#A090FF"></i>Progresso (%)</span></div>
+                </div>
+                <div class="relative" style="height:220px"><canvas id="goalsChart"></canvas></div>
+                <div id="goalsChartEmpty" class="cv-empty hidden mt-2">
+                    <i class="fa-solid fa-bullseye text-2xl text-[#8070F0] mb-2"></i>
+                    <p class="text-xs text-[#6F807C]">Crie metas e mova o progresso para ver a evolução ao longo do tempo.</p>
+                </div>
+            </div>
+
+            <!-- FINANCIAL GOALS & REBALANCING SECTION -->
+            <div id="secMetas" class="centavus-card p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-white/5 pb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-[#30A080]"></i>
+                            Metas Financeiras & Alocação de Ativos
+                        </h3>
+                        <p class="text-xs text-[#6F807C]" id="goalsSummary">Acompanhamento de objetivos e rebalanceamento automatizado</p>
+                    </div>
+                    <button onclick="openGoalModal()" class="text-xs bg-[#204040] hover:bg-[#30A080] text-white font-semibold px-3 py-1.5 rounded-xl transition self-start sm:self-auto">
+                        + Nova Meta
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5" id="goalsGridContainer">
+                    <!-- Goal 1 -->
+                    <div class="bg-[#102020] p-4 rounded-2xl border border-white/5 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-[#30A080]"></i>
+                                Reserva de Emergência
+                            </span>
+                            <span class="text-[#70E0C0] font-semibold">73%</span>
+                        </div>
+                        <div class="w-full bg-[#203030] h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#30A080] to-[#40C8A0] h-full rounded-full" style="width: 73%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-[#A8B5B2] font-mono">
+                            <span class="confidential-value" data-value="14600">R$ 14.600</span>
+                            <span class="text-[#6F807C]">Meta: R$ 20.000</span>
+                        </div>
+                    </div>
+
+                    <!-- Goal 2 -->
+                    <div class="bg-[#102020] p-4 rounded-2xl border border-white/5 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-[#8070F0]"></i>
+                                Ações & FIIs (B3)
+                            </span>
+                            <span class="text-[#A090FF] font-semibold">52%</span>
+                        </div>
+                        <div class="w-full bg-[#203030] h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#8070F0] to-[#A090FF] h-full rounded-full" style="width: 52%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-[#A8B5B2] font-mono">
+                            <span class="confidential-value" data-value="26000">R$ 26.000</span>
+                            <span class="text-[#6F807C]">Meta: R$ 50.000</span>
+                        </div>
+                    </div>
+
+                    <!-- Goal 3 -->
+                    <div class="bg-[#102020] p-4 rounded-2xl border border-white/5 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-plane text-[#40C8A0]"></i>
+                                Viagem Internacional
+                            </span>
+                            <span class="text-[#40C8A0] font-semibold">90%</span>
+                        </div>
+                        <div class="w-full bg-[#203030] h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-[#40C8A0] h-full rounded-full" style="width: 90%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-[#A8B5B2] font-mono">
+                            <span class="confidential-value" data-value="9000">R$ 9.000</span>
+                            <span class="text-[#6F807C]">Meta: R$ 10.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== COFRINHO COM CDI ==================== -->
+            <section id="secCofrinho" class="cv-reveal grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Saldo, valores guardados e extrato do cofrinho -->
+                <div class="centavus-card p-6 lg:col-span-2">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-piggy-bank text-[#70E0C0]"></i> Cofrinho Centavus
+                                <span class="cf-badge"><i class="fa-solid fa-percentage"></i> 100% do CDI</span>
+                            </h3>
+                            <p class="text-xs text-[#6F807C] mt-1">Sua reserva rende o CDI e o rendimento é creditado automaticamente todo mês.</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <label class="flex items-center gap-1.5 bg-[#102020] border border-white/10 rounded-xl px-2.5 py-2" for="cdiInput">
+                                <span class="text-[10px] text-[#6F807C] font-extrabold uppercase">CDI</span>
+                                <input id="cdiInput" type="text" value="14.90"
+                                       class="w-16 bg-transparent text-xs text-[#70E0C0] font-extrabold text-right focus:outline-none" inputmode="decimal">
+                                <span class="text-[10px] text-[#6F807C] font-bold">% a.a.</span>
+                            </label>
+                            <button type="button" onclick="setCdi()" class="text-xs font-bold bg-[#204040] hover:bg-[#30A080] text-white px-3 py-2 rounded-xl transition">Aplicar</button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl p-5 border border-[#30A080]/25 bg-gradient-to-br from-[#30A080]/12 to-[#8070F0]/10 mb-4">
+                        <p class="text-[10px] text-[#A8B5B2] uppercase tracking-wider font-extrabold">Saldo do cofrinho</p>
+                        <p id="cofrinhoSaldo" class="text-3xl sm:text-4xl font-extrabold text-white font-mono mt-1 confidential-value" data-value="0">R$ 0,00</p>
+                        <p class="text-[11px] text-[#6F807C] mt-1" id="cofrinhoMeta">—</p>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
+                            <div class="bg-[#0d1615]/70 rounded-xl p-3 border border-white/5">
+                                <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Guardado</p>
+                                <strong id="cofrinhoAportado" class="text-sm text-white font-mono confidential-value" data-value="0">R$ 0,00</strong>
+                            </div>
+                            <div class="bg-[#0d1615]/70 rounded-xl p-3 border border-white/5">
+                                <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Rendimento acumulado</p>
+                                <strong id="cofrinhoRendimento" class="text-sm text-[#40C8A0] font-mono confidential-value" data-value="0">R$ 0,00</strong>
+                            </div>
+                            <div class="bg-[#0d1615]/70 rounded-xl p-3 border border-white/5 col-span-2 sm:col-span-1">
+                                <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Projeção 12 meses <span class="font-normal normal-case">· com o guardado mensal</span></p>
+                                <strong id="cofrinhoProjecao" class="text-sm text-[#A090FF] font-mono confidential-value" data-value="0">R$ 0,00</strong>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2.5 mt-4">
+                            <button type="button" class="cf-btn add" onclick="openCofrinhoValue('add')"><i class="fa-solid fa-circle-plus"></i> Guardar</button>
+                            <button type="button" class="cf-btn rem" onclick="openCofrinhoValue('remove')"><i class="fa-solid fa-circle-minus"></i> Resgatar</button>
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-extrabold mb-2">Últimos lançamentos do cofrinho</p>
+                    <div id="cofrinhoHist" class="space-y-2 max-h-56 overflow-y-auto modal-scroll pr-1"></div>
+                </div>
+
+                <!-- Simulador de CDI -->
+                <div class="centavus-card p-6">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-[#A090FF]"></i> Simulador de CDI
+                    </h3>
+                    <p class="text-xs text-[#6F807C] mt-0.5 mb-4">Veja quanto o valor guardado por mês pode render.</p>
+
+                    <label class="cf-label" for="simAporte">Guardado mensal (R$)</label>
+                    <input id="simAporte" type="text" value="300" class="cf-field" inputmode="decimal" oninput="runCdiSimulator()" onchange="saveGuardadoMensal()" onkeydown="if(event.key==='Enter'){event.preventDefault();saveGuardadoMensal();}" placeholder="Quanto você guarda por mês" aria-describedby="simFormula">
+
+                    <label class="cf-label mt-3" for="simPrazo">Prazo</label>
+                    <select id="simPrazo" class="cf-field">
+                        <option value="6">6 meses</option>
+                        <option value="12" selected>12 meses</option>
+                        <option value="24">24 meses</option>
+                        <option value="36">36 meses</option>
+                        <option value="60">60 meses</option>
+                    </select>
+
+                    <button type="button" onclick="runCdiSimulator()" class="w-full mt-4 py-2.5 rounded-xl bg-gradient-to-r from-[#30A080] to-[#8070F0] hover:opacity-90 text-white text-xs font-extrabold transition">
+                        <i class="fa-solid fa-play mr-1.5"></i> Simular
+                    </button>
+
+                    <div class="mt-4 rounded-xl bg-[#102020] border border-white/5 p-4 space-y-2.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-[#6F807C]">Total investido</span>
+                            <strong id="simInvestido" class="text-white font-mono">—</strong>
+                        </div>
+                        <p id="simFormula" class="text-[10px] text-[#53625f] leading-relaxed">—</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-[#6F807C]">Rendimento estimado</span>
+                            <strong id="simRendimento" class="text-[#40C8A0] font-mono">—</strong>
+                        </div>
+                        <div class="flex items-center justify-between text-xs pt-2.5 border-t border-white/5">
+                            <span class="text-[#A8B5B2] font-semibold">Total final</span>
+                            <strong id="simFinal" class="text-[#70E0C0] font-mono text-sm">—</strong>
+                        </div>
+                    </div>
+                    <p id="simNota" class="text-[10px] text-[#53625f] mt-3 leading-relaxed">Cálculo com juros compostos mês a mês, a 100% do CDI.</p>
+                </div>
+            </section>
+
+            <!-- CENTAVUS ZAP — assistente no estilo WhatsApp -->
+            <section id="secZap" class="cv-reveal centavus-card">
+                <div class="zap-head">
+                    <div class="zap-avatar"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="min-w-0">
+                        <h2 class="zap-title">Centavus Zap</h2>
+                        <p class="zap-sub"><span class="zap-dot"></span> Assistente on-line · registra na hora</p>
+                    </div>
+                    <button type="button" class="zap-plan-btn" onclick="cvAbrirPlanos()"><i class="fa-solid fa-crown"></i> <span id="zapPlanTag">Grátis</span></button>
+                </div>
+
+                <div id="zapMsgs" class="zap-msgs" aria-live="polite" aria-label="Conversa com o Zap"></div>
+                <div id="zapChips" class="zap-chips"></div>
+                <form id="zapForm" class="zap-form" autocomplete="off">
+                    <input type="text" id="zapInput" placeholder="Digite um comando: “gastei 50 reais no almoço”…" aria-label="Comando do Zap">
+                    <button type="submit" class="zap-send" aria-label="Enviar comando"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+
+                <div class="zap-grid">
+                    <div class="zap-box">
+                        <h3><i class="fa-solid fa-bolt"></i> Comandos rápidos no WhatsApp</h3>
+                        <p>Abre seu WhatsApp com a mensagem pronta — é só tocar em enviar. Funciona sem servidor.</p>
+                        <div id="zapQcmds" class="zap-qcmds"></div>
+                    </div>
+                    <div class="zap-box">
+                        <h3><i class="fa-solid fa-mobile-screen-button"></i> Meu número</h3>
+                        <p>Com o número salvo, os comandos abrem direto na conversa certa (com você mesmo ou de outro aparelho).</p>
+                        <div class="zap-num-row">
+                            <input type="tel" id="zapNumInput" placeholder="55 11 99999-0000" aria-label="Seu número com DDI e DDD">
+                            <button type="button" id="zapNumSave">Salvar</button>
+                        </div>
+                        <button type="button" id="zapOpenBtn" class="zap-open-btn"><i class="fa-brands fa-whatsapp mr-1"></i> Abrir meu WhatsApp</button>
+                    </div>
+                    <div class="zap-box">
+                        <h3><i class="fa-solid fa-robot"></i> Bot automático no seu número</h3>
+                        <p>O Zap já funciona aqui dentro, com os mesmos comandos do assistente de voz. O próximo passo é ligar seu número à API oficial da Meta (WhatsApp Cloud API), para você mandar os comandos pelo aplicativo e eles caírem aqui.</p>
+                        <div class="zap-soon-row">
+                            <span class="zap-soon">Em breve no seu número</span>
+                            <button type="button" class="zap-bot-howto" onclick="cvBotInfo()"><i class="fa-solid fa-list-check mr-1"></i> Ver como ativar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION BAR -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#101010]/95 backdrop-blur-lg border-t border-white/10 z-50 flex justify-around py-2.5 px-2">
+        <a href="#" data-section="dashboard" onclick="setActiveNav(this, 'dashboard');return false;" class="mobile-nav-item active flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-house-chimney text-base"></i>
+            <span>Início</span>
+        </a>
+        <a href="#" onclick="openModal();return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-plus-circle text-base text-[#70E0C0]"></i>
+            <span>Novo</span>
+        </a>
+        <a href="#" data-section="movimentacoes" onclick="setActiveNav(this, 'movimentacoes');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-receipt text-base"></i>
+            <span>Extrato</span>
+        </a>
+        <a href="#" data-section="contas" onclick="setActiveNav(this, 'contas');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-wallet text-sm"></i>
+            <span class="truncate max-w-full">Contas</span>
+        </a>
+        <a href="#" data-section="cartoes" onclick="setActiveNav(this, 'cartoes');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-credit-card text-sm"></i>
+            <span class="truncate max-w-full">Cartões</span>
+        </a>
+        <a href="#" data-section="metas" onclick="setActiveNav(this, 'metas');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-bullseye text-base"></i>
+            <span>Metas</span>
+        </a>
+        <a href="#" data-section="cofrinho" onclick="setActiveNav(this, 'cofrinho');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-piggy-bank text-base"></i>
+            <span>Cofrinho</span>
+        </a>
+        <a href="#" data-section="zap" onclick="setActiveNav(this, 'zap');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-brands fa-whatsapp text-base text-[#40C8A0]"></i>
+            <span>Zap</span>
+        </a>
+        <a href="#" data-section="config" onclick="setActiveNav(this, 'config');return false;" class="mobile-nav-item flex flex-col items-center gap-1 text-[10px] min-w-0">
+            <i class="fa-solid fa-gear text-base"></i>
+            <span>Ajustes</span>
+        </a>
+    </nav>
+
+    <!-- MODAL: ADD NEW TRANSACTION -->
+    <div id="transactionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
+        <div class="centavus-card p-5 sm:p-6 w-full max-w-md border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-5 border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-[#30A080]"></i>
+                    Nova Transação
+                </h3>
+                <button onclick="closeModal()" class="text-[#6F807C] hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="transactionForm" onsubmit="handleAddTransaction(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Tipo de Operação</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type" value="despesa" checked class="peer hidden" onchange="updateCategoryOptions()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#8070F0] peer-checked:text-white font-semibold text-xs transition border border-white/5">
+                                Saída (-)
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type" value="receita" class="peer hidden" onchange="updateCategoryOptions()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#30A080] peer-checked:text-white font-semibold text-xs transition border border-white/5">
+                                Entrada (+)
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Descrição</label>
+                    <input type="text" id="inputDesc" required placeholder="Ex: Mercado, Salário, Investimento"
+                           class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Valor (R$)</label>
+                        <input type="number" step="0.01" inputmode="decimal" id="inputValue" required placeholder="0,00" oninput="updateInstallHint()"
+                               class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Categoria</label>
+                        <select id="inputCategory" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Roupas">Roupas</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Mês de Referência</label>
+                        <select id="inputMonth" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                            <option value="Jan">Janeiro</option>
+                            <option value="Fev">Fevereiro</option>
+                            <option value="Mar">Março</option>
+                            <option value="Abr">Abril</option>
+                            <option value="Mai">Maio</option>
+                            <option value="Jun">Junho</option>
+                            <option value="Jul">Julho</option>
+                            <option value="Ago">Agosto</option>
+                            <option value="Set">Setembro</option>
+                            <option value="Out">Outubro</option>
+                            <option value="Nov">Novembro</option>
+                            <option value="Dez">Dezembro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Ano</label>
+                        <select id="inputYear" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="inputAccount">Conta</label>
+                        <select id="inputAccount" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                            <option value="">Sem conta vinculada</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Repetição</label>
+                        <label class="flex items-center gap-2.5 bg-[#102020] border border-white/5 rounded-xl px-3.5 py-2.5 cursor-pointer h-[42px]">
+                            <input type="checkbox" id="inputRecorrente" class="w-4 h-4 accent-[#30A080] shrink-0">
+                            <span class="text-xs text-[#A8B5B2]">Repetir todo mês</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Forma de pagamento</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="pay" value="credito" class="peer hidden" onchange="updatePayFields()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#8070F0] peer-checked:text-white font-semibold text-xs transition border border-white/5">
+                                <i class="fa-solid fa-credit-card mr-1"></i>Cartão de crédito
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="pay" value="debito" class="peer hidden" onchange="updatePayFields()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#30A080] peer-checked:text-white font-semibold text-xs transition border border-white/5">
+                                <i class="fa-solid fa-money-check mr-1"></i>Cartão de débito
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="pay" value="pix" checked class="peer hidden" onchange="updatePayFields()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#40C8A0] peer-checked:text-[#0B1110] font-semibold text-xs transition border border-white/5">
+                                <i class="fa-solid fa-bolt mr-1"></i>Pix
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="pay" value="dinheiro" class="peer hidden" onchange="updatePayFields()">
+                            <div class="text-center py-2.5 rounded-xl bg-[#102020] text-[#A8B5B2] peer-checked:bg-[#FFD166] peer-checked:text-[#0B1110] font-semibold text-xs transition border border-white/5">
+                                <i class="fa-solid fa-money-bill-wave mr-1"></i>Dinheiro
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="cardFields" class="hidden">
+                    <div class="grid grid-cols-2 gap-3" id="parcelasWrap">
+                        <div>
+                            <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="inputParcelas">Parcelas</label>
+                            <select id="inputParcelas" class="w-full bg-[#102020] text-white text-sm px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none" onchange="updateInstallHint()"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="inputCard">Cartão</label>
+                            <select id="inputCard" class="w-full bg-[#102020] text-white text-sm px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none" onchange="updateInstallHint()"></select>
+                        </div>
+                    </div>
+                    <p id="cardHint" class="text-[11px] mt-2 leading-relaxed"></p>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Salvar Movimentação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD NEW GOAL -->
+    <div id="goalModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
+        <div class="centavus-card p-5 sm:p-6 w-full max-w-md border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-5 border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-[#8070F0]"></i>
+                    <span id="goalModalTitle">Nova Meta Financeira</span>
+                </h3>
+                <button onclick="closeGoalModal()" class="text-[#6F807C] hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="goalForm" onsubmit="handleAddGoal(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Título da Meta</label>
+                    <input type="text" id="goalTitle" required placeholder="Ex: Compra de Carro, Troca de Notebook"
+                           class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#8070F0] focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Valor Atual (R$)</label>
+                        <input type="number" step="0.01" inputmode="decimal" id="goalCurrent" required placeholder="0,00"
+                               class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#8070F0] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1">Meta Objetivo (R$)</label>
+                        <input type="number" step="0.01" inputmode="decimal" id="goalTarget" required placeholder="0,00"
+                               class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#8070F0] focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                    <button type="button" onclick="closeGoalModal()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                    <button type="submit" id="goalSubmitBtn" class="px-5 py-2 bg-[#8070F0] hover:bg-[#9080FF] text-white font-semibold text-xs rounded-xl shadow-lg transition">Criar Meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: GUARDAR / RESGATAR VALOR NA META -->
+    <div id="goalValueModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
+        <div class="centavus-card p-5 sm:p-6 w-full max-w-sm border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 id="goalValueTitle" class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-[#40C8A0]"></i> Guardar na meta
+                </h3>
+                <button type="button" onclick="closeGoalValue()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <p class="text-[10px] text-[#6F807C] uppercase tracking-wider" id="goalValueCtxLabel">Meta</p>
+            <p id="goalValueGoalName" class="text-sm font-bold text-white mb-4">—</p>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-[#102020] rounded-xl p-3 border border-white/5">
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider">Acumulado</p>
+                    <p id="goalValueCurrent" class="text-sm font-bold text-white font-mono mt-1">R$ 0,00</p>
+                </div>
+                <div class="bg-[#102020] rounded-xl p-3 border border-white/5">
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider" id="goalValueRestLabel">Faltam</p>
+                    <p id="goalValueRest" class="text-sm font-bold text-[#70E0C0] font-mono mt-1">R$ 0,00</p>
+                </div>
+            </div>
+
+            <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="goalValueInput">Valor (R$)</label>
+            <input type="number" id="goalValueInput" min="0.01" step="0.01" placeholder="0,00" inputmode="decimal"
+                   class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#40C8A0] focus:outline-none mb-3"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGoalValue();}">
+
+            <div class="flex flex-wrap gap-2 mb-3">
+                <button type="button" class="quick-amount" onclick="quickGoalAmount(50)">R$ 50</button>
+                <button type="button" class="quick-amount" onclick="quickGoalAmount(100)">R$ 100</button>
+                <button type="button" class="quick-amount" onclick="quickGoalAmount(500)">R$ 500</button>
+                <button type="button" class="quick-amount" onclick="quickGoalAmount(1000)">R$ 1.000</button>
+            </div>
+
+            <div id="goalValueError" class="login-error" role="alert" aria-live="polite"></div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                <button type="button" onclick="closeGoalValue()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                <button type="button" id="goalValueConfirmBtn" onclick="confirmGoalValue()" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRAÇÃO: META ATINGIDA -->
+    <div id="congratsOverlay" class="fixed inset-0 z-[10060] hidden items-center justify-center p-5" style="background:rgba(3,8,7,.84);backdrop-filter:blur(10px)">
+        <div class="relative w-full max-w-md">
+            <div id="congratsConfetti" class="cv-confetti" style="inset:-30px"></div>
+            <div class="centavus-card congrats-card p-7 border border-[#40C8A0]/30 shadow-2xl text-center">
+                <div class="congrats-trophy mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-[#30A080] to-[#8070F0] flex items-center justify-center mb-5">
+                    <i class="fa-solid fa-trophy text-white text-3xl"></i>
+                </div>
+                <div class="text-[#70E0C0] text-[10px] font-extrabold uppercase tracking-[.2em] mb-2">Parabéns!</div>
+                <h3 class="text-2xl font-extrabold text-white brand-font">Você atingiu a meta 🎉</h3>
+                <p class="text-sm text-[#A8B5B2] mt-3">A meta <strong id="congratsGoalName" class="text-white">—</strong> foi concluída.</p>
+                <p id="congratsGoalValue" class="text-2xl font-extrabold text-[#FFD166] font-mono mt-3">R$ 0,00</p>
+                <p id="congratsGoalMsg" class="text-xs text-[#6F807C] mt-3 leading-relaxed">Continue assim: cada valor guardado avança o seu planejamento financeiro.</p>
+                <div class="flex gap-3 mt-6">
+                    <button onclick="closeCongrats()" class="flex-1 py-2.5 rounded-xl bg-[#30A080] hover:bg-[#40C8A0] text-white text-xs font-bold transition">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ORÇAMENTO MENSAL -->
+    <div id="budgetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-lg border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-wallet text-[#40C8A0]"></i> Orçamento mensal
+                </h3>
+                <button type="button" onclick="closeBudgetModal()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="budgetForm" onsubmit="handleBudgetSubmit(event)" class="grid grid-cols-1 sm:grid-cols-[1fr_120px_auto] gap-2 mb-3">
+                <select id="budgetCat" class="bg-[#102020] text-white text-xs px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none"></select>
+                <input type="number" id="budgetLimit" min="1" step="1" placeholder="Limite (R$)" inputmode="numeric"
+                       class="bg-[#102020] text-white text-xs px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                <button type="submit" class="px-4 py-2.5 bg-[#30A080] hover:bg-[#40C8A0] text-white text-xs font-bold rounded-xl transition">Salvar limite</button>
+            </form>
+            <div id="budgetError" class="login-error" role="alert"></div>
+
+            <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold mb-2 mt-4">Limites por categoria</p>
+            <div id="budgetList" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: CARTÃO (novo / editar) -->
+    <!-- MODAL: FATURA DO CARTÃO (abre ao clicar no cartão) -->
+    <div id="cardInvoiceModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-lg border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice-dollar text-[#40C8A0]"></i> <span id="ciTitle">Fatura do cartão</span>
+                </h3>
+                <button type="button" onclick="closeCardInvoice()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="ciBody" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="cardModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-md border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 id="cardModalTitle" class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-credit-card text-[#40C8A0]"></i> Novo cartão
+                </h3>
+                <button type="button" onclick="closeCardModal()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="cardForm" onsubmit="handleCardSubmit(event)" novalidate class="space-y-3">
+                <div>
+                    <label class="cf-label" for="cardName">Apelido do cartão</label>
+                    <input type="text" id="cardName" maxlength="26" placeholder="Ex.: Nubank, Itaú..." class="cf-field" autocomplete="off">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="cf-label" for="cardBrand">Bandeira</label>
+                        <select id="cardBrand" class="cf-field" onchange="cardBrandChanged()">
+                            <option>Mastercard</option>
+                            <option>Visa</option>
+                            <option>Elo</option>
+                            <option>American Express</option>
+                            <option>Hipercard</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="cf-label" for="cardLast4">Últimos 4 dígitos</label>
+                        <input type="text" id="cardLast4" maxlength="4" inputmode="numeric" placeholder="8842" class="cf-field" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="cf-label" for="cardLimit">Limite (R$)</label>
+                        <input type="number" id="cardLimit" min="0" step="0.01" placeholder="5000" class="cf-field" inputmode="decimal">
+                    </div>
+                    <div>
+                        <label class="cf-label" for="cardFatura">Fatura atual (R$)</label>
+                        <input type="number" id="cardFatura" min="0" step="0.01" placeholder="0,00" class="cf-field" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="cf-label" for="cardClose">Dia do fechamento</label>
+                        <input type="number" id="cardClose" min="1" max="28" step="1" value="1" class="cf-field" inputmode="numeric">
+                    </div>
+                    <div>
+                        <label class="cf-label" for="cardDue">Dia do vencimento</label>
+                        <input type="number" id="cardDue" min="1" max="28" step="1" value="1" class="cf-field" inputmode="numeric">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="cf-label">Cor do cartão</label>
+                    <div id="cardSwatches" class="flex flex-wrap items-center gap-2"></div>
+                    <div class="flex items-center gap-2.5 mt-2.5">
+                        <input type="color" id="cardColorPick" class="cv-color-input" value="#14B8A6" onchange="pickCustomCardColor()" aria-label="Cor personalizada do cartão">
+                        <span class="text-[11px] text-[#6F807C] leading-tight">Cor personalizada — as amostras acima já trazem os gradientes prontos</span>
+                    </div>
+                    <div id="cardColorPreview" class="cv-color-preview mt-2.5" aria-hidden="true"></div>
+                </div>
+
+                <div id="cardError" class="login-error" role="alert" aria-live="polite"></div>
+
+                <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+                    <button type="button" id="cardDeleteBtn" onclick="deleteCardFromModal()" class="hidden text-[#ff9aa5] hover:text-white text-xs font-semibold transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Excluir cartão
+                    </button>
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button type="button" onclick="closeCardModal()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                        <button type="submit" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Salvar cartão</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: RENDA FIXA (cálculo e simulação) -->
+    <div id="rfModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-lg border border-white/10 shadow-2xl relative animate-fade-in modal-scroll">
+            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-[#40C8A0]"></i> Renda Fixa
+                </h3>
+                <button type="button" onclick="closeRendaFixa()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <p class="text-[11px] text-[#6F807C] mb-3 leading-relaxed">
+                Aqui é <b class="text-[#70E0C0]">só para colocar o valor</b>: digite <b class="text-[#70E0C0]">o valor do seu salário</b> e ele fica fixo mês a mês pelo período abaixo (padrão <b class="text-[#70E0C0]">12 meses</b>), entrando como ENTRADA nos cartões, nos gráficos e na taxa. Sem CDI, juros nem impostos.
+            </p>
+
+            <form id="rfForm" onsubmit="handleRfSubmit(event)" novalidate class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="cf-label" for="rfTipo">Tipo de papel</label>
+                        <select id="rfTipo" class="cf-field">
+                            <option>CDB</option>
+                            <option>LCI</option>
+                            <option>LCA</option>
+                            <option>Tesouro Selic</option>
+                            <option>CRI</option>
+                            <option>CRA</option>
+                            <option>Debênture</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="cf-label" for="rfValor">Valor do salário (R$)</label>
+                        <input type="text" id="rfValor" inputmode="decimal" placeholder="Seu salário, ex.: 3000 ou 3.000,00" class="cf-field">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="cf-label" for="rfPrazo">Salário fixo por (meses)</label>
+                        <input type="number" id="rfPrazo" min="1" max="600" step="1" inputmode="numeric" value="12" class="cf-field">
+                    </div>
+                    <div>
+                        <label class="cf-label" for="rfInicio">Início</label>
+                        <input type="date" id="rfInicio" class="cf-field">
+                    </div>
+                </div>
+
+                <div id="rfError" class="login-error" role="alert" aria-live="polite"></div>
+
+                <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+                    <button type="button" id="rfDeleteBtn" onclick="deleteRfFromModal()" class="hidden text-[#ff9aa5] hover:text-white text-xs font-semibold transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Excluir
+                    </button>
+                    <div class="flex items-center gap-2 ml-auto">
+                        <button type="button" onclick="clearRfForm()" class="px-3 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Limpar</button>
+                        <button type="submit" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Salvar</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="mt-4 pt-4 border-t border-white/10">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-[10px] text-[#6F807C] uppercase tracking-wider font-bold">Seus registros</p>
+                    <p id="rfCount" class="text-[10px] text-[#70E0C0] font-bold">0</p>
+                </div>
+                <div id="rfList" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+                <div id="rfTotals" class="grid grid-cols-2 gap-2 mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONTA BANCÁRIA -->
+    <div id="accountModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-md border border-white/10 shadow-2xl relative animate-fade-in max-h-[92vh] overflow-y-auto modal-scroll">
+            <div class="flex items-center justify-between mb-5 border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-wallet text-[#30A080]"></i>
+                    <span id="accountModalTitle">Nova conta</span>
+                </h3>
+                <button onclick="closeAccountModal()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="accountForm" onsubmit="handleAccountSubmit(event)" class="space-y-4" novalidate>
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="accountName">Nome da conta</label>
+                    <input id="accountName" type="text" maxlength="40" placeholder="Ex.: Nubank, Itaú, Carteira" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="accountType">Tipo</label>
+                    <select id="accountType" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                        <option value="corrente">Conta corrente</option>
+                        <option value="poupanca">Poupança</option>
+                        <option value="dinheiro">Dinheiro em espécie</option>
+                        <option value="investimentos">Investimentos</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="accountBalanceInput" id="accountBalanceLabel">Saldo atual (R$)</label>
+                    <input id="accountBalanceInput" type="number" step="0.01" inputmode="decimal" placeholder="0,00" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                    <p id="accountHint" class="text-[11px] text-[#6F807C] mt-1.5 leading-relaxed">Informe o saldo de hoje. As movimentações vinculadas a esta conta passam a somar ou subtrair daqui.</p>
+                </div>
+
+                <div id="accountError" class="login-error" role="alert" aria-live="polite"></div>
+
+                <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+                    <button type="button" id="accountDeleteBtn" onclick="deleteAccount(accountEditId)" class="text-xs font-semibold text-[#ff9aa5] hover:text-white transition hidden"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button type="button" onclick="closeAccountModal()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                        <button type="submit" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Salvar conta</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: TRANSFERÊNCIA ENTRE CONTAS -->
+    <div id="transferModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="centavus-card p-6 w-full max-w-md border border-white/10 shadow-2xl relative animate-fade-in max-h-[92vh] overflow-y-auto modal-scroll">
+            <div class="flex items-center justify-between mb-5 border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-right-left text-[#30A080]"></i>
+                    Transferir entre contas
+                </h3>
+                <button onclick="closeTransferModal()" class="text-[#6F807C] hover:text-white transition" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="transferForm" onsubmit="handleTransferSubmit(event)" class="space-y-4" novalidate>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="transferFrom">Sai de</label>
+                        <select id="transferFrom" class="w-full bg-[#102020] text-white text-sm px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="transferTo">Entra em</label>
+                        <select id="transferTo" class="w-full bg-[#102020] text-white text-sm px-3 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none"></select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="transferValue">Valor (R$)</label>
+                        <input id="transferValue" type="number" step="0.01" inputmode="decimal" min="0.01" placeholder="0,00" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="transferDate">Data</label>
+                        <input id="transferDate" type="date" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-[#A8B5B2] font-medium mb-1" for="transferDesc">Descrição (opcional)</label>
+                    <input id="transferDesc" type="text" maxlength="60" placeholder="Ex.: poupar para a viagem" class="w-full bg-[#102020] text-white text-sm px-3.5 py-2.5 rounded-xl border border-white/10 focus:border-[#30A080] focus:outline-none">
+                </div>
+
+                <p class="text-[11px] text-[#6F807C] leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i> A transferência só muda o saldo das contas — não aparece como entrada nem como saída nos relatórios.</p>
+
+                <div id="transferError" class="login-error" role="alert" aria-live="polite"></div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                    <button type="button" onclick="closeTransferModal()" class="px-4 py-2 text-xs font-semibold text-[#A8B5B2] hover:text-white transition">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-[#30A080] hover:bg-[#40C8A0] text-white font-semibold text-xs rounded-xl shadow-lg transition">Transferir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: INFORMATIVO -->
+    <div id="infoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
+        <div class="centavus-card p-5 sm:p-6 w-full max-w-sm border border-white/10 shadow-2xl text-center animate-fade-in modal-scroll">
+            <div class="mx-auto w-14 h-14 rounded-2xl bg-[#30A080]/15 text-[#70E0C0] flex items-center justify-center text-xl mb-4">
+                <i id="infoModalIcon" class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 id="infoModalTitle" class="text-lg font-bold text-white">—</h3>
+            <p id="infoModalText" class="text-xs text-[#A8B5B2] mt-2 leading-relaxed">—</p>
+            <button type="button" onclick="closeInfo()" class="w-full mt-5 py-2.5 rounded-xl bg-[#30A080] hover:bg-[#40C8A0] text-white text-xs font-bold transition">Entendi</button>
+        </div>
+    </div>
+
+    <script src="js/state.js"></script>
+    <script src="js/confirm.js"></script>
+    <script src="js/localApi.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/transactions.js"></script>
+    <script src="js/goals.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/budgets.js"></script>
+    <script src="js/accounts.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/cards.js"></script>
+    <script src="js/cofrinho.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/rendaFixa.js"></script>
+    <script src="js/voice.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/premiumFeatures.js"></script>
+    <script src="js/zap.js"></script>
+</body>
+</html>

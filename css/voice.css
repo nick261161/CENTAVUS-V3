@@ -1,0 +1,313 @@
+/* ==========================================================================
+   CENTAVUS — ASSISTENTE DE VOZ (FAB + painel)
+   Moderno, glassmorphism, respeita tema claro (via variáveis quando existirem)
+   e prefers-reduced-motion.
+   ========================================================================== */
+
+/* ---------- Botão flutuante (FAB) ---------- */
+.cvv-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 58px;
+    height: 58px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 70;
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #30A080 0%, #40C8A0 55%, #8070F0 130%);
+    box-shadow: 0 8px 28px rgba(48, 160, 128, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+    transition: transform .22s cubic-bezier(.16, 1, .3, 1), box-shadow .22s ease, filter .22s ease;
+}
+.cvv-fab:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 12px 34px rgba(48, 160, 128, .5), inset 0 1px 0 rgba(255,255,255,.25); }
+.cvv-fab:active { transform: scale(.97); }
+.cvv-fab:focus-visible { outline: 2px solid #70E0C0; outline-offset: 3px; }
+.cvv-fab.cvv-open { filter: saturate(1.15); }
+
+/* anéis de pulso quando ouvindo */
+.cvv-fab-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(64, 200, 160, .7);
+    opacity: 0;
+    pointer-events: none;
+}
+.cvv-fab-ring2 { border-color: rgba(128, 112, 240, .55); animation-delay: .6s; }
+.cvv-fab.cvv-listening .cvv-fab-ring { animation: cvvPulse 1.6s ease-out infinite; }
+.cvv-fab.cvv-listening .cvv-fab-ring2 { animation: cvvPulse 1.6s ease-out .8s infinite; }
+.cvv-fab.cvv-listening { box-shadow: 0 8px 34px rgba(64, 200, 160, .65), inset 0 1px 0 rgba(255,255,255,.25); }
+
+@keyframes cvvPulse {
+    0% { transform: scale(1); opacity: .8; }
+    100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* ---------- Painel ---------- */
+.cvv-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 96px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    max-height: min(480px, 70vh);
+    display: flex;
+    flex-direction: column;
+    z-index: 70;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(13, 20, 19, .92);
+    border: 1px solid rgba(255, 255, 255, .09);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    transform-origin: bottom right;
+    animation: cvvIn .22s cubic-bezier(.16, 1, .3, 1);
+}
+@keyframes cvvIn {
+    from { opacity: 0; transform: translateY(10px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cvv-panel.cvv-hidden { display: none; }
+
+.cvv-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+.cvv-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+}
+.cvv-title i {
+    background: linear-gradient(135deg, #40C8A0, #8070F0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 15px;
+}
+.cvv-close {
+    background: transparent;
+    border: none;
+    color: #6F807C;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 8px;
+    transition: color .18s ease, background .18s ease;
+}
+.cvv-close:hover { color: #fff; background: rgba(255, 255, 255, .07); }
+
+/* status + onda sonora */
+.cvv-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 11px;
+    color: #A8B5B2;
+    min-height: 30px;
+}
+.cvv-wave { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.cvv-wave i {
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #40C8A0, #8070F0);
+    animation: cvvBar 1s ease-in-out infinite;
+}
+.cvv-wave i:nth-child(2) { animation-delay: .15s; }
+.cvv-wave i:nth-child(3) { animation-delay: .3s; }
+/* quando o JS mede o volume real do microfone, ele assume o controle das barrinhas */
+.cvv-wave.cvv-live i { animation: none; transform: scaleY(.3); transition: transform .08s linear; }
+@keyframes cvvBar {
+    0%, 100% { transform: scaleY(.35); }
+    50% { transform: scaleY(1); }
+}
+
+/* microfone dentro do campo de texto */
+.cvv-mic-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    align-self: center;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .12);
+    color: #A8B5B2;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.cvv-mic-btn:hover { color: #fff; border-color: rgba(64, 200, 160, .55); transform: translateY(-1px); }
+.cvv-mic-btn:active { transform: scale(.95); }
+.cvv-mic-btn.cvv-active {
+    color: #0B1110;
+    border-color: transparent;
+    background: linear-gradient(135deg, #30A080, #40C8A0);
+    animation: cvvMicPulse 1.5s ease-out infinite;
+}
+@keyframes cvvMicPulse {
+    0% { box-shadow: 0 0 0 0 rgba(64, 200, 160, .45); }
+    100% { box-shadow: 0 0 0 11px rgba(64, 200, 160, 0); }
+}
+
+/* log da conversa */
+.cvv-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .15) transparent;
+}
+.cvv-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    padding: 8px 11px;
+    border-radius: 13px;
+    max-width: 92%;
+    animation: cvvMsgIn .18s ease-out;
+}
+@keyframes cvvMsgIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+}
+.cvv-msg i { font-size: 11px; margin-top: 2px; flex-shrink: 0; }
+.cvv-msg.user {
+    align-self: flex-end;
+    background: rgba(128, 112, 240, .16);
+    border: 1px solid rgba(128, 112, 240, .3);
+    color: #DCD6FF;
+    border-bottom-right-radius: 4px;
+}
+.cvv-msg.user i { color: #A090FF; }
+.cvv-msg.bot {
+    align-self: flex-start;
+    background: rgba(48, 160, 128, .1);
+    border: 1px solid rgba(48, 160, 128, .22);
+    color: #D6EFE6;
+    border-bottom-left-radius: 4px;
+}
+.cvv-msg.bot i { color: #40C8A0; }
+
+/* chips de exemplos */
+.cvv-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 16px 10px;
+}
+.cvv-chip {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #A8B5B2;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 999px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.cvv-chip:hover {
+    color: #fff;
+    border-color: rgba(64, 200, 160, .55);
+    background: rgba(48, 160, 128, .12);
+    transform: translateY(-1px);
+}
+
+/* campo de texto (fallback + multitarefa) */
+.cvv-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px 14px;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+}
+.cvv-input-row input {
+    flex: 1;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 12px;
+    padding: 9px 13px;
+    color: #fff;
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color .18s ease, background .18s ease;
+}
+.cvv-input-row input::placeholder { color: #6F807C; }
+.cvv-input-row input:focus { border-color: #30A080; background: rgba(48, 160, 128, .07); }
+.cvv-send {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #0B1110;
+    font-size: 13px;
+    background: linear-gradient(135deg, #30A080, #40C8A0);
+    transition: transform .18s cubic-bezier(.16, 1, .3, 1), filter .18s ease;
+    flex-shrink: 0;
+    align-self: center;
+}
+.cvv-send:hover { transform: scale(1.06); filter: brightness(1.08); }
+.cvv-send:active { transform: scale(.96); }
+
+/* ---------- Modo claro ---------- */
+html[data-mode="light"] .cvv-panel {
+    background: rgba(255, 255, 255, .93);
+    border-color: rgba(16, 32, 32, .1);
+    box-shadow: 0 24px 64px rgba(16, 32, 32, .18), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+html[data-mode="light"] .cvv-title { color: #0B1110; }
+html[data-mode="light"] .cvv-close { color: #6F807C; }
+html[data-mode="light"] .cvv-close:hover { color: #0B1110; background: rgba(16, 32, 32, .06); }
+html[data-mode="light"] .cvv-status { color: #53625f; }
+html[data-mode="light"] .cvv-msg.user { background: rgba(128, 112, 240, .12); border-color: rgba(128, 112, 240, .3); color: #3B2F8F; }
+html[data-mode="light"] .cvv-msg.bot { background: rgba(48, 160, 128, .1); color: #0F5F4C; }
+html[data-mode="light"] .cvv-chip { background: rgba(16, 32, 32, .04); border-color: rgba(16, 32, 32, .1); color: #53625f; }
+html[data-mode="light"] .cvv-input-row input { background: rgba(16, 32, 32, .04); border-color: rgba(16, 32, 32, .1); color: #0B1110; }
+html[data-mode="light"] .cvv-mic-btn { border-color: rgba(16, 32, 32, .14); color: #53625f; }
+html[data-mode="light"] .cvv-mic-btn:hover { color: #0B1110; border-color: rgba(48, 160, 128, .5); }
+html[data-mode="light"] .cvv-mic-btn.cvv-active { color: #fff; }
+html[data-mode="light"] .cvv-input-row { border-top-color: rgba(16, 32, 32, .08); }
+
+/* ---------- Mobile: acima da barra de navegação ---------- */
+@media (max-width: 640px) {
+    .cvv-fab { right: 16px; bottom: 84px; width: 52px; height: 52px; font-size: 19px; }
+    .cvv-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 148px;
+        max-height: 60vh;
+    }
+}
+
+/* ---------- Acessibilidade: movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .cvv-panel, .cvv-msg { animation: none; }
+    .cvv-fab, .cvv-chip, .cvv-send { transition: none; }
+    .cvv-fab.cvv-listening .cvv-fab-ring,
+    .cvv-fab.cvv-listening .cvv-fab-ring2 { animation: none; opacity: .35; }
+    .cvv-wave i { animation: none; transform: scaleY(.7); }
+    .cvv-mic-btn.cvv-active { animation: none; }
+}

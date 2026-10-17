@@ -1,0 +1,178 @@
+/* Extraído de index.html — mantenha a ordem de carregamento. */
+        :root {
+            --bg: #101010;
+            --bg-secondary: #102020;
+            --surface: #203030;
+            --surface-elevated: #204040;
+            --surface-hover: #2a3d3d;
+            
+            --primary-dark: #103030;
+            --primary: #30A080;
+            --primary-hover: #40C8A0;
+            --primary-light: #70E0C0;
+            
+            --accent: #8070F0;
+            --accent-hover: #9080FF;
+            --accent-light: #A090FF;
+            
+            --text-primary: #F5F7F6;
+            --text-secondary: #A8B5B2;
+            --text-subtle: #6F807C;
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 30px;
+
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.25);
+            --glow-primary: 0 0 35px rgba(48, 160, 128, 0.12);
+            --glow-accent: 0 0 30px rgba(128, 112, 240, 0.25);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Manrope', 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-elevated);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Centavus custom design component styles */
+        .centavus-card {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .centavus-card:hover {
+            border-color: rgba(48, 160, 128, 0.25);
+            box-shadow: var(--shadow-card), var(--glow-primary);
+        }
+
+        .centavus-card-elevated {
+            background-color: var(--surface-elevated);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .centavus-pill-search {
+            background-color: var(--primary-dark);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .centavus-pill-search:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 18px rgba(48, 160, 128, 0.3);
+        }
+
+        .financial-value-lg {
+            font-size: 2.125rem; /* 34px */
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        /* Active Navigation item styling */
+        .nav-item {
+            color: var(--text-secondary);
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+            background-color: var(--primary-dark);
+            border: 1px solid rgba(48, 160, 128, 0.4);
+            box-shadow: 0 0 15px rgba(48, 160, 128, 0.2);
+        }
+
+        /* Custom Credit Card Visual */
+        .credit-card-bg {
+            background: linear-gradient(135deg, #182b2b 0%, #102020 50%, #171b26 100%);
+            border: 1px solid rgba(128, 112, 240, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .credit-card-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(128, 112, 240, 0.18) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+        }
+
+        .credit-card-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -20%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(48, 160, 128, 0.22) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+        }
+
+        /* Category Item Hover State */
+        .category-row {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .category-row:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .category-row.selected {
+            background-color: rgba(128, 112, 240, 0.15);
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Confidential state blur mask */
+        .value-hidden {
+            letter-spacing: 2px;
+            color: var(--text-subtle) !important;
+            user-select: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+
