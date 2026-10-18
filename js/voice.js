@@ -776,7 +776,7 @@
             '“criar orçamento alimentação com oitocentos”, “quanto gastei este mês”, “próximo mês”, “buscar mercado”, ' +
             '“exportar csv”, “tema violeta”, “modo escuro”, “meu nome é João”, “limpar notificações”, “baixar backup”, ' +
             '“quanto vou gastar no fim do mês”, “tem vazamento?”, “mapa de calor”, ' +
-            '“ver planos”, “meu plano”, “ativar código”, “abrir zap” ou “testar premium”.';
+            '“ver planos”, “meu plano”, “ativar código”, “vincular meu número no zap”, “abrir zap” ou “testar premium”.';
         cvvLogAdd('bot', txt);
         cvvSpeak('Posso lançar gastos, pagar faturas, criar metas, cartões, contas, cofrinho, renda fixa e orçamentos, transferir, abrir telas, resumir suas finanças, projetar o fim do mês, checar vazamentos e até mostrar os planos. Veja os exemplos na tela.');
     }
@@ -792,6 +792,11 @@
                 m += ' Você já usou ' + cvQuotaUsada('voz') + ' de ' + cvQuotaMax('voz') + ' comandos de voz hoje.';
             }
             cvvSay(m);
+            return;
+        }
+        /* vincular meu número ao bot do WhatsApp */
+        if (/vincular|vinculo|conectar (meu )?(zap|numero)|codigo do (zap|bot|whatsapp)/.test(nv)) {
+            cvvZapVinculo();
             return;
         }
         /* ativar com código */
@@ -818,6 +823,25 @@
         /* ver planos */
         if (typeof cvAbrirPlanos === 'function') cvAbrirPlanos();
         cvvSay('Os planos são: Grátis, com tudo do Centavus e 30 comandos por dia; Pro por 19,90 reais por mês, com 150 comandos, 10 metas, 6 contas, 5 cartões e exportação; e Premium por 39,90 reais, tudo sem limite. Diga “ativar código” ou “testar premium”.');
+    }
+
+    /* “vincular meu número” — gera o código do vínculo site ↔ WhatsApp */
+    function cvvZapVinculo() {
+        if (typeof cvIsLocal === 'function' && cvIsLocal()) {
+            cvvSay('O vínculo precisa do site no ar. Abra o Centavus pelo endereço do servidor, entre na sua conta e peça de novo.');
+            return;
+        }
+        if (typeof apiPost !== 'function') { cvvSay('Vínculo indisponível agora.'); return; }
+        cvvSay('Gerando seu código de vinculação...');
+        apiPost('/api/me/zap', { action: 'codigo' }).then(function (d) {
+            if (!d || !d.codigo) { cvvSay('Não consegui gerar o código agora. Tente de novo em instantes.'); return; }
+            if (typeof zapMostrarCodigo === 'function') zapMostrarCodigo(d.codigo, d.expiraMin);
+            const falado = d.codigo.split('').join(' ');
+            cvvSay('Seu código é: ' + falado + '. Mande no WhatsApp a frase: vincular, ' + falado +
+                '. Ele vale ' + d.expiraMin + ' minutos.');
+        }).catch(function (err) {
+            cvvSay((err && err.message) ? err.message : 'Não consegui gerar o código agora.');
+        });
     }
 
     /* ===================== RECURSOS PREMIUM (VOZ) ===================== */
@@ -1581,8 +1605,8 @@
             return;
         }
 
-        /* --- planos, assinatura e ativação (sempre livres, sem cota) --- */
-        if (/(plano|assinatura|premium|\bpro\b|quanto custa|ativar|codigo|testar|\btrial\b|zap|whatsapp)/.test(nv)) {
+        /* --- planos, assinatura, ativação e vínculo do Zap (sempre livres, sem cota) --- */
+        if (/(plano|assinatura|premium|\bpro\b|quanto custa|ativar|codigo|testar|\btrial\b|zap|whatsapp|vincular|vinculo)/.test(nv)) {
             cvvPlans(text, nv);
             return;
         }

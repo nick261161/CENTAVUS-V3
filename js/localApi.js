@@ -48,7 +48,7 @@ function applyCvModeText(){
     const note = document.getElementById('settingsDataNote');
     if (note) note.textContent = local
         ? 'Modo teste (sem servidor): seus dados ficam salvos neste navegador. Publique junto com o servidor (npm start) para valer contas reais e sincronização entre aparelhos.'
-        : 'Seus dados ficam salvos na sua conta Centavus (servidor + SQLite) e são sincronizados a cada alteração. Neste aparelho fica apenas uma cópia de cache, para abrir rápido e funcionar offline.';
+        : 'Seus dados ficam salvos na sua conta Centavus (servidor Centavus) e são sincronizados a cada alteração. Neste aparelho fica apenas uma cópia de cache, para abrir rápido e funcionar offline.';
 }
 
 async function cvDetectMode(){

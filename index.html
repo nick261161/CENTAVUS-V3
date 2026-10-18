@@ -1067,9 +1067,14 @@
                     </div>
                     <div class="zap-box">
                         <h3><i class="fa-solid fa-robot"></i> Bot automático no seu número</h3>
-                        <p>O Zap já funciona aqui dentro, com os mesmos comandos do assistente de voz. O próximo passo é ligar seu número à API oficial da Meta (WhatsApp Cloud API), para você mandar os comandos pelo aplicativo e eles caírem aqui.</p>
+                        <p>Mande os comandos pelo seu WhatsApp e eles caem dentro do Centavus na hora. Vincule seu número uma vez só — pelo código que aparece aqui.</p>
+                        <div class="zap-link-row">
+                            <button type="button" id="zapLinkBtn" class="zap-bot-howto" onclick="zapGerarVinculo()"><i class="fa-solid fa-link mr-1"></i> <span>Vincular meu número</span></button>
+                            <div class="zap-link-code" id="zapLinkCode" hidden></div>
+                        </div>
+                        <p class="zap-link-status" id="zapLinkStatus" hidden></p>
                         <div class="zap-soon-row">
-                            <span class="zap-soon">Em breve no seu número</span>
+                            <span class="zap-soon">API oficial da Meta</span>
                             <button type="button" class="zap-bot-howto" onclick="cvBotInfo()"><i class="fa-solid fa-list-check mr-1"></i> Ver como ativar</button>
                         </div>
                     </div>

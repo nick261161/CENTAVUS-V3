@@ -161,16 +161,19 @@ function zapBoot() {
         zapAbrirZap('Oi, Zap! ' + (zapNumero() ? '' : '(sem número salvo — salve o seu no card acima) '));
     });
 
-    /* primeiro scroll da seção apresenta o bot */
+    /* primeiro scroll da seção apresenta o bot + mostra status do vínculo */
     if ('IntersectionObserver' in window) {
         const sec = document.getElementById('secZap');
         if (sec) {
             const io = new IntersectionObserver(function (ents) {
-                ents.forEach(function (en) { if (en.isIntersecting) { zapBoasVindasSePrecisa(); io.disconnect(); } });
+                ents.forEach(function (en) { if (en.isIntersecting) { zapBoasVindasSePrecisa(); zapStatusVinculo(); io.disconnect(); } });
             }, { threshold: 0.25 });
             io.observe(sec);
         }
-    } else zapBoasVindasSePrecisa();
+    } else { zapBoasVindasSePrecisa(); zapStatusVinculo(); }
+
+    /* sessão já restaurada no boot? então o status já dá pra buscar agora */
+    setTimeout(zapStatusVinculo, 1500);
 
     /* aviso de limite vindo dos bloqueios (gate) durante um comando Zap */
     document.addEventListener('cv:gate', function (e) {
@@ -178,6 +181,56 @@ function zapBoot() {
         const msg = e.detail && e.detail.message;
         if (msg) zapBot(msg);
     });
+}
+
+/* ------------------------------------------------------------------
+   VÍNCULO: número do WhatsApp ↔ conta do site (código gerado no servidor)
+   ------------------------------------------------------------------ */
+function zapStatusVinculo() {
+    const st = zap$('zapLinkStatus');
+    if (!st || st.dataset.ok === '1') return;
+    if (typeof cvIsLocal === 'function' && cvIsLocal()) return;   /* sem servidor não há vínculo */
+    apiGet('/api/me/zap').then(function (d) {
+        if (!d || !d.numero) return;
+        st.dataset.ok = '1';
+        st.hidden = false;
+        st.innerHTML = '<i class="fa-solid fa-circle-check"></i> Número vinculado: <b>' + zapFormatarTel(d.numero) + '</b> — já estou ligado à sua conta. 🎉';
+        const btn = zap$('zapLinkBtn');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate mr-1"></i> <span>Gerar novo código</span>';
+    }).catch(function () { /* sem sessão agora — tenta no próximo scroll */ });
+}
+
+function zapFormatarTel(n) {
+    const d = String(n || '').replace(/\D/g, '');
+    if ((d.length === 12 || d.length === 13) && d.slice(0, 2) === '55') return '+' + d.slice(0, 2) + ' (' + d.slice(2, 4) + ') ' + d.slice(4);
+    return d;
+}
+
+function zapGerarVinculo() {
+    const btn = zap$('zapLinkBtn');
+    if (typeof cvIsLocal === 'function' && cvIsLocal()) {
+        toast('O vínculo precisa do servidor no ar: abra o site pelo endereço do Render (https://…onrender.com), entre na conta e clique de novo.', 'error');
+        return;
+    }
+    if (btn) { btn.disabled = true; btn.style.opacity = '.6'; }
+    apiPost('/api/me/zap', { action: 'codigo' }).then(function (d) {
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+        if (!d || !d.codigo) return;
+        zapMostrarCodigo(d.codigo, d.expiraMin);
+        toast('Código gerado! Mande “vincular ' + d.codigo + '” pra mim no WhatsApp.', 'success');
+    }).catch(function (err) {
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+        toast((err && err.message) ? err.message : 'Não consegui gerar o código. Tente de novo.', 'error');
+    });
+}
+
+/* mostra o código no card (usado pelo botão E pela voz) */
+function zapMostrarCodigo(codigo, minutos) {
+    const code = zap$('zapLinkCode');
+    if (!code) return;
+    code.hidden = false;
+    code.innerHTML = '<b class="zap-code-valor">' + codigo + '</b>' +
+        '<span class="zap-code-dica">Me mande no WhatsApp: <i>vincular ' + codigo + '</i> — vale ' + (minutos || 20) + ' minutos.</span>';
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', zapBoot);
@@ -189,12 +242,14 @@ function cvBotInfo() {
     showInfo(
         'Ativar o bot no seu número',
         'É um servidor gratuito que recebe as mensagens do WhatsApp e responde na hora. ' +
+        'Hoje o servidor do Centavus faz tudo junto: hospeda o site, guarda os dados da conta na nuvem e roda o bot. ' +
         '1) Crie um app gratuito no Meta for Developers e ative o WhatsApp nele. ' +
         '2) Pegue o Token de acesso e o ID do número (no painel > WhatsApp > API). ' +
-        '3) Baixe a pasta "bot-whatsapp" deste pacote, preencha as variáveis no README e rode "node server.js". ' +
+        '3) Suba a pasta "bot-whatsapp" num serviço como o Render (start: node server.js) e preencha as variáveis do README. ' +
         '4) Aponte o webhook da Meta para o seu servidor (o token de verificação já vem configurado). ' +
-        'Pronto: seu cliente manda "gastei 45 no almoço" e o bot confirma na hora. ' +
-        'O passo a passo completo, com o que colar em cada tela, está no arquivo bot-whatsapp/README.md.',
+        '5) Volte aqui, clique em "Vincular meu número" e mande o código pro bot no WhatsApp. ' +
+        'Pronto: seu cliente manda "gastei 45 no almoço" e o lançamento cai no painel Centavus na hora. ' +
+        'O passo a passo completo está no arquivo bot-whatsapp/README.md.',
         'fa-robot'
     );
 }

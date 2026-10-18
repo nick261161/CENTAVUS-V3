@@ -327,6 +327,20 @@ html[data-mode="light"] .zap-num-row input { background: #fff; border-color: rgb
 }
 .zap-bot-howto:hover { background: rgba(37, 211, 102, .2); }
 
+/* vínculo: número do WhatsApp ↔ conta do site */
+.zap-link-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.zap-link-code {
+    display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 12px;
+    background: rgba(37, 211, 102, .08); border: 1px dashed rgba(37, 211, 102, .45);
+}
+.zap-link-code[hidden] { display: none; }
+.zap-link-code .zap-code-valor { font-size: 17px; letter-spacing: 1.5px; color: #25D366; font-weight: 900; }
+.zap-link-code .zap-code-dica { font-size: 11.5px; color: #8FA19D; line-height: 1.5; }
+.zap-link-code .zap-code-dica i { color: #F5F7F6; font-style: normal; font-weight: 800; }
+.zap-link-status { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #40C8A0; margin-top: 8px; font-weight: 700; }
+.zap-link-status[hidden] { display: none; }
+.zap-link-status b { color: #F5F7F6; }
+
 /* =============== MODO CLARO: recursos premium =============== */
 html[data-mode="light"] .cvx-sub { color: #6F807C; }
 html[data-mode="light"] .cvx-valor { color: #0B1110; }
@@ -337,6 +351,12 @@ html[data-mode="light"] .cvx-achado strong { color: #0B1110; }
 html[data-mode="light"] .cvx-achado p { color: #53625f; }
 html[data-mode="light"] .cvx-ok span { color: #46554F; }
 html[data-mode="light"] .cvx-cel { background: #E4EDEA; border-color: rgba(11, 18, 17, .06); }
+html[data-mode="light"] .zap-link-code { background: rgba(18, 140, 110, .07); border-color: rgba(18, 140, 110, .4); }
+html[data-mode="light"] .zap-link-code .zap-code-valor { color: #128C6E; }
+html[data-mode="light"] .zap-link-code .zap-code-dica { color: #53625f; }
+html[data-mode="light"] .zap-link-code .zap-code-dica i { color: #0B1110; }
+html[data-mode="light"] .zap-link-status { color: #128C6E; }
+html[data-mode="light"] .zap-link-status b { color: #0B1110; }
 html[data-mode="light"] .cvx-l1 { background: #B9E5D6; }
 html[data-mode="light"] .cvx-l2 { background: #7ED2B6; }
 html[data-mode="light"] .cvx-l3 { background: #3FB895; }
